@@ -11,10 +11,15 @@ import java.util.List;
 
 public class DeliveryPointController {
     private static final String SEPARATOR = ";";
+
     private List<DeliveryPoint> deliveryPointList;
 
     private DeliveryPointController (final List<DeliveryPoint> deliveryPointList) {
         this.deliveryPointList = deliveryPointList;
+    }
+
+    public List<DeliveryPoint> getDeliveryPointList() {
+        return deliveryPointList;
     }
 
     public static DeliveryPointController initializeFromFile(final String fileName) {

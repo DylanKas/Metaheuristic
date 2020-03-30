@@ -12,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -21,6 +23,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 
 public class Map {
@@ -48,8 +51,14 @@ public class Map {
         lookupNodes();
 
         logAction("--------- Application started ---------");
-        drawCircle(0,0,5);
-        drawCircle(100,100,10);
+        drawHouse(0,0,5);
+        drawHouse(100,100,10);
+        drawWarehouse(50,50);
+
+        Random r = new Random();
+        for(int i=0;i<80;i++){
+            drawHouse(r.nextInt(100) + 1,r.nextInt(100) + 1,5);
+        }
 
 
         //Set reset button behavior
@@ -89,13 +98,26 @@ public class Map {
         logs.setEditable(false);
     }
 
-    public void drawCircle(int x, int y, int q){
+    public void drawHouse(int x, int y, int q){
         Platform.runLater(() -> {
             Circle circle = new Circle(OFFSET_X+LENGTH_X*x, OFFSET_Y+LENGTH_Y*y, DEFAULT_NODE_RADIUS);
             circle.setFill(DEFAULT_NODE_FILL);
             circle.setStroke(DEFAULT_NODE_STROKE);
             map.getChildren().add(circle);
             map.setStyle("-fx-background-color: #" + "ffffff");
+        });
+    }
+
+    public void drawWarehouse(int x, int y){
+        Platform.runLater(() -> {
+            Image warehouse = new Image("/warehouse.png");
+            ImageView imageView = new ImageView();
+            imageView.setImage(warehouse);
+            imageView.setX(OFFSET_X+LENGTH_X*x);
+            imageView.setY(OFFSET_Y+LENGTH_Y*y);
+            imageView.setFitHeight(30);
+            imageView.setFitWidth(30);
+            map.getChildren().add(imageView);
         });
     }
 

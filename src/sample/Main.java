@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import view.Map;
 
 public class Main extends Application {
 
@@ -13,7 +14,8 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Metaheuristic - Mehdi Labourdette - Dylan Kong A Siou");
         primaryStage.setScene(new Scene(root, 1200, 800));
-        primaryStage.show();
+        //primaryStage.show();
+        Map map = new Map(primaryStage);
     }
 
 

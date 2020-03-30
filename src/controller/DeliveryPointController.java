@@ -22,6 +22,10 @@ public class DeliveryPointController {
         return deliveryPointList;
     }
 
+    public DeliveryPoint getWarehouse(){
+        return deliveryPointList.get(0);
+    }
+
     public static DeliveryPointController initializeFromFile(final String fileName) {
         try {
             final BufferedReader reader = new BufferedReader(new FileReader(fileName));

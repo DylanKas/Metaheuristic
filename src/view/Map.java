@@ -1,5 +1,6 @@
 package view;
 
+import controller.DeliveryPointController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import model.DeliveryPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +45,8 @@ public class Map {
     private ChoiceBox dataChoice;
     private TextArea logs;
 
+    private DeliveryPointController deliveryPointController;
+
     public Map(Stage stage) {
         this.stage = stage;
         this.stage.setResizable(false);
@@ -51,14 +55,12 @@ public class Map {
         lookupNodes();
 
         logAction("--------- Application started ---------");
-        drawHouse(0,0,5);
-        drawHouse(100,100,10);
         drawWarehouse(50,50);
 
-        Random r = new Random();
-        for(int i=0;i<80;i++){
-            drawHouse(r.nextInt(100) + 1,r.nextInt(100) + 1,5);
-        }
+        //Random r = new Random();
+        //for(int i=0;i<80;i++){
+        //    drawHouse(r.nextInt(100) + 1,r.nextInt(100) + 1,5);
+        //}
 
 
         //Set reset button behavior
@@ -81,12 +83,25 @@ public class Map {
         dataChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
             // if the item of the list is changed
             public void changed(ObservableValue ov, Number value, Number new_value) {
-                logAction("Data selected: " + list.get(new_value.intValue()));
+                logAction("---- Data selected: " + list.get(new_value.intValue()));
+                resetMap();
+                deliveryPointController = DeliveryPointController.initializeFromFile("./resources/"+list.get(new_value.intValue()));
+                drawHouses(deliveryPointController.getDeliveryPointList());
             }
         });
 
+        deliveryPointController = DeliveryPointController.initializeFromFile("./resources/"+list.get(0));
+        drawHouses(deliveryPointController.getDeliveryPointList());
     }
 
+    private void drawHouses(List<DeliveryPoint> lists){
+        for (DeliveryPoint deliveryPoint : lists) {
+            drawHouse(deliveryPoint.getX(),deliveryPoint.getY(),deliveryPoint.getQuantity());
+        }
+        logAction("Delivery points added");
+        drawWarehouse(deliveryPointController.getWarehouse().getX(),deliveryPointController.getWarehouse().getY());
+        logAction("Warehouse added (x: "+deliveryPointController.getWarehouse().getX()+", y: "+deliveryPointController.getWarehouse().getY()+")");
+    }
     private void logAction(String action){
         logs.appendText(action + "\n");
     }
@@ -122,7 +137,7 @@ public class Map {
     }
 
     public void resetMap(){
-        logAction("INFO: Map has been reset");
+        logAction("-- Map has been reset");
         Platform.runLater(() -> map.getChildren().clear());
     }
 

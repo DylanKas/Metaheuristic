@@ -53,15 +53,7 @@ public class Map {
         this.stage.show();
         //Initialize Java FX nodes by their ID
         lookupNodes();
-
         logAction("--------- Application started ---------");
-        drawWarehouse(50,50);
-
-        //Random r = new Random();
-        //for(int i=0;i<80;i++){
-        //    drawHouse(r.nextInt(100) + 1,r.nextInt(100) + 1,5);
-        //}
-
 
         //Set reset button behavior
         EventHandler<ActionEvent> buttonResetHandler = new EventHandler<ActionEvent>() {
@@ -78,8 +70,10 @@ public class Map {
         ArrayList<String> choices = new ArrayList<>(namesList);
         ObservableList<String> list = FXCollections.observableArrayList(choices);
         dataChoice.setItems(list);
+
+        //Set default data file and initialize the map
         dataChoice.setValue(list.get(0));
-        logAction("Data selected: " + list.get(0));
+        logAction("---- Data selected: " + list.get(0));
         dataChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
             // if the item of the list is changed
             public void changed(ObservableValue ov, Number value, Number new_value) {
@@ -89,7 +83,6 @@ public class Map {
                 drawHouses(deliveryPointController.getDeliveryPointList());
             }
         });
-
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/"+list.get(0));
         drawHouses(deliveryPointController.getDeliveryPointList());
     }
@@ -98,9 +91,9 @@ public class Map {
         for (DeliveryPoint deliveryPoint : lists) {
             drawHouse(deliveryPoint.getX(),deliveryPoint.getY(),deliveryPoint.getQuantity());
         }
-        logAction("Delivery points added");
+        logAction("- Delivery points added");
         drawWarehouse(deliveryPointController.getWarehouse().getX(),deliveryPointController.getWarehouse().getY());
-        logAction("Warehouse added (x: "+deliveryPointController.getWarehouse().getX()+", y: "+deliveryPointController.getWarehouse().getY()+")");
+        logAction("- Warehouse added (x: "+deliveryPointController.getWarehouse().getX()+", y: "+deliveryPointController.getWarehouse().getY()+")");
     }
     private void logAction(String action){
         logs.appendText(action + "\n");
@@ -115,17 +108,25 @@ public class Map {
 
     public void drawHouse(int x, int y, int q){
         Platform.runLater(() -> {
-            Circle circle = new Circle(OFFSET_X+LENGTH_X*x, OFFSET_Y+LENGTH_Y*y, DEFAULT_NODE_RADIUS);
-            circle.setFill(DEFAULT_NODE_FILL);
-            circle.setStroke(DEFAULT_NODE_STROKE);
-            map.getChildren().add(circle);
-            map.setStyle("-fx-background-color: #" + "ffffff");
+           //Circle circle = new Circle(OFFSET_X+LENGTH_X*x, OFFSET_Y+LENGTH_Y*y, DEFAULT_NODE_RADIUS);
+           //circle.setFill(DEFAULT_NODE_FILL);
+           //circle.setStroke(DEFAULT_NODE_STROKE);
+           //map.getChildren().add(circle);
+           //map.setStyle("-fx-background-color: #" + "ffffff");
+            Image house = new Image("/house2.png");
+            ImageView imageView = new ImageView();
+            imageView.setImage(house);
+            imageView.setX(OFFSET_X+LENGTH_X*x);
+            imageView.setY(OFFSET_Y+LENGTH_Y*y);
+            imageView.setFitHeight(30);
+            imageView.setFitWidth(30);
+            map.getChildren().add(imageView);
         });
     }
 
     public void drawWarehouse(int x, int y){
         Platform.runLater(() -> {
-            Image warehouse = new Image("/warehouse.png");
+            Image warehouse = new Image("/warehouse2.png");
             ImageView imageView = new ImageView();
             imageView.setImage(warehouse);
             imageView.setX(OFFSET_X+LENGTH_X*x);
@@ -137,7 +138,7 @@ public class Map {
     }
 
     public void resetMap(){
-        logAction("-- Map has been reset");
+        logAction("- Map has been reset");
         Platform.runLater(() -> map.getChildren().clear());
     }
 

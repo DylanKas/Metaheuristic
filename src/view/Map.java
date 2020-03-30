@@ -88,11 +88,12 @@ public class Map {
     }
 
     private void drawHouses(List<DeliveryPoint> lists){
+        map.setStyle("-fx-background-color: #" + "76AE66");
         for (DeliveryPoint deliveryPoint : lists) {
-            drawHouse(deliveryPoint.getX(),deliveryPoint.getY(),deliveryPoint.getQuantity());
+            drawHouse(deliveryPoint);
         }
         logAction("- Delivery points added");
-        drawWarehouse(deliveryPointController.getWarehouse().getX(),deliveryPointController.getWarehouse().getY());
+        drawWarehouse(deliveryPointController.getWarehouse());
         logAction("- Warehouse added (x: "+deliveryPointController.getWarehouse().getX()+", y: "+deliveryPointController.getWarehouse().getY()+")");
     }
     private void logAction(String action){
@@ -106,34 +107,37 @@ public class Map {
         logs.setEditable(false);
     }
 
-    public void drawHouse(int x, int y, int q){
+    public void drawHouse(DeliveryPoint deliveryPoint){
         Platform.runLater(() -> {
            //Circle circle = new Circle(OFFSET_X+LENGTH_X*x, OFFSET_Y+LENGTH_Y*y, DEFAULT_NODE_RADIUS);
            //circle.setFill(DEFAULT_NODE_FILL);
            //circle.setStroke(DEFAULT_NODE_STROKE);
            //map.getChildren().add(circle);
            //map.setStyle("-fx-background-color: #" + "ffffff");
+            if(deliveryPoint.getI() == 0){
+                return;
+            }
             Image house = new Image("/house2.png");
             ImageView imageView = new ImageView();
             imageView.setImage(house);
-            imageView.setX(OFFSET_X+LENGTH_X*x);
-            imageView.setY(OFFSET_Y+LENGTH_Y*y);
-            imageView.setFitHeight(30);
-            imageView.setFitWidth(30);
+            imageView.setX(OFFSET_X+LENGTH_X*deliveryPoint.getX());
+            imageView.setY(OFFSET_Y+LENGTH_Y*deliveryPoint.getY());
+            imageView.setFitHeight(20);
+            imageView.setFitWidth(20);
             map.getChildren().add(imageView);
         });
     }
 
-    public void drawWarehouse(int x, int y){
+    public void drawWarehouse(DeliveryPoint warehouse){
         Platform.runLater(() -> {
-            Image warehouse = new Image("/warehouse2.png");
-            ImageView imageView = new ImageView();
-            imageView.setImage(warehouse);
-            imageView.setX(OFFSET_X+LENGTH_X*x);
-            imageView.setY(OFFSET_Y+LENGTH_Y*y);
-            imageView.setFitHeight(30);
-            imageView.setFitWidth(30);
-            map.getChildren().add(imageView);
+            Image warehouseImage = new Image("/warehouse2.png");
+            ImageView imageView2 = new ImageView();
+            imageView2.setImage(warehouseImage);
+            imageView2.setX(OFFSET_X+LENGTH_X*warehouse.getX());
+            imageView2.setY(OFFSET_Y+LENGTH_Y*warehouse.getY());
+            imageView2.setFitHeight(45);
+            imageView2.setFitWidth(45);
+            map.getChildren().add(imageView2);
         });
     }
 

@@ -38,6 +38,7 @@ public class DeliveryPointController {
             {
                 final DeliveryPoint deliveryPoint = new DeliveryPoint();
                 String[] splitLine = line.split(SEPARATOR);
+                deliveryPoint.setI(Integer.parseInt(splitLine[0]));
                 deliveryPoint.setX(Integer.parseInt(splitLine[1]));
                 deliveryPoint.setY(Integer.parseInt(splitLine[2]));
                 deliveryPoint.setQuantity(Integer.parseInt(splitLine[3]));

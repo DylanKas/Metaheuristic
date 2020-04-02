@@ -1,4 +1,11 @@
 
-Z	java:S106"9Replace this use of System.out or System.err by a logger.(Š™Ò¾ûÿÿÿÿ8ÕÓÂÛ’.
+a
+java:S21471"DCombine this catch with the one at line 47, which has the same body.(ï­£Ä8•€ôİ’.
+n
+java:S2677""LUse or store the value returned from "readLine" instead of throwing it away.(£­—âÿÿÿÿÿ8ãÒóİ’.
 E
-java:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8ƒÏ·Û’.
+java:S11482"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8•€ôİ’.
+E
+java:S11480"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8İ’İ’.
+i
+java:S2095"LUse try-with-resources or close this "BufferedReader" in a "finally" clause.(”´Ğº8¹˜ğİ’.

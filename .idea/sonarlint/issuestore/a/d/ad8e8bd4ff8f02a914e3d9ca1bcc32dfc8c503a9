@@ -1,0 +1,10 @@
+
+T
+java:S1854"7Remove this useless assignment to local variable "map".(úÂÙœ8ÉâœŞ’.
+]	java:S125"<This block of commented-out lines of code should be removed.(ûá¥Üıÿÿÿÿ8ÉâœŞ’.
+E
+java:S1481"(Remove this unused "map" local variable.(úÂÙœ8ÉâœŞ’.
+[
+java:S1854">Remove this useless assignment to local variable "controller".(İËµ£8ÉâœŞ’.
+L
+java:S1481"/Remove this unused "controller" local variable.(İËµ£8ÉâœŞ’.

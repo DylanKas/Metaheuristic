@@ -33,6 +33,14 @@ public class DeliveryRoute implements Cloneable{
         return length;
     }
 
+    public DeliveryPoint getWarehouse() {
+        return warehouse;
+    }
+
+    public void setWarehouse(DeliveryPoint warehouse) {
+        this.warehouse = warehouse;
+    }
+
     public int getTotalQuantity() {
         return totalQuantity;
     }

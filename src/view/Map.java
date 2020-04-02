@@ -98,13 +98,13 @@ public class Map {
                     deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(new_value.intValue()));
                     drawHouses(deliveryPointController.getDeliveryPointList());
                     System.out.println("DRAW ROUTES");
-                    drawRoutes(deliveryPointController.generateSolution());
+                    drawRoutes(deliveryPointController.generateOrderedSolution());
                 }
             }
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
         drawHouses(deliveryPointController.getDeliveryPointList());
-        drawRoutes(deliveryPointController.generateSolution());
+        drawRoutes(deliveryPointController.generateOrderedSolution());
 
     }
 

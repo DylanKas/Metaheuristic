@@ -139,7 +139,7 @@ public class DeliveryPointController {
         while (!unvisitedIndexList.isEmpty() && !hasInserted) {
             routeToInsertIndex = RANDOM.nextInt(deliveryRoutes.size());
             final DeliveryRoute deliveryRouteToInsert = deliveryRoutes.get(routeToInsertIndex);
-            if (deliveryRouteToInsert.getLength() + deliveryPointToMove.getQuantity() > MAX_QUANTITY) {
+            if (deliveryRouteToInsert.getTotalQuantity() + deliveryPointToMove.getQuantity() > MAX_QUANTITY) {
                 unvisitedIndexList.remove(routeToInsertIndex);
             }
             else {

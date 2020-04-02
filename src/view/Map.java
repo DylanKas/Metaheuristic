@@ -74,7 +74,21 @@ public class Map {
         EventHandler<ActionEvent> buttonResetHandler = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //resetMap();
+                resetMap();
+                //try {
+                //    runAndWait(Map.this::resetLines);
+                //} finally {
+                //    drawRoutes(deliveryPointController.generateRandomNeighborSolution());
+                //}
+            }
+        };
+        Button buttonReset = (Button) stage.getScene().lookup("#buttonReset");
+        buttonReset.setOnAction(buttonResetHandler);
+
+        //Set reset button behavior
+        EventHandler<ActionEvent> buttonNeighbor1Handler = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
@@ -82,8 +96,22 @@ public class Map {
                 }
             }
         };
-        Button buttonReset = (Button) stage.getScene().lookup("#buttonReset");
-        buttonReset.setOnAction(buttonResetHandler);
+        Button buttonNeighbor1 = (Button) stage.getScene().lookup("#buttonNeighbor1");
+        buttonNeighbor1.setOnAction(buttonNeighbor1Handler);
+
+        //Set reset button behavior
+        EventHandler<ActionEvent> buttonNeighbor2Handler = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    runAndWait(Map.this::resetLines);
+                } finally {
+                    drawRoutes(deliveryPointController.generateRandomNeighborSolution2());
+                }
+            }
+        };
+        Button buttonNeighbor2 = (Button) stage.getScene().lookup("#buttonNeighbor2");
+        buttonNeighbor2.setOnAction(buttonNeighbor2Handler);
 
         //Set choice box with data files
         final File folder = new File("./resources/data");
@@ -114,7 +142,7 @@ public class Map {
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
         drawHouses(deliveryPointController.getDeliveryPointList());
-        drawRoutes(deliveryPointController.generateOrderedSolution());
+        drawRoutes(deliveryPointController.generateGreedySolution());
 
     }
 
@@ -161,6 +189,9 @@ public class Map {
         DeliveryPoint warehouse = lists.get(0).getWarehouse();
         int routeIteration = 0;
         for (DeliveryRoute deliveryRoute : lists) {
+            if(deliveryRoute.getDeliveryPointList().size()==0){
+                System.out.println("SIZE OF ZERO");
+            }
             routeIteration++;
             int iteration = 0;
             List<DeliveryPoint> routes = deliveryRoute.getDeliveryPointList();
@@ -265,7 +296,7 @@ public class Map {
     }
 
     public void resetHouses(){
-        mapLines.getChildren().clear();
+        mapHouses.getChildren().clear();
     }
     /**
      * Runs the specified {@link Runnable} on the

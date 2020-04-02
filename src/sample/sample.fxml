@@ -38,5 +38,7 @@
             </AnchorPane>
          </children>
       </StackPane>
+      <Button fx:id="buttonNeighbor2" layoutX="989.0" layoutY="338.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Iteration Neighbor 2" />
+      <Button fx:id="buttonNeighbor1" layoutX="989.0" layoutY="305.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Iteration Neighbor 1" />
    </children>
 </Pane>

@@ -25,6 +25,39 @@ public class DeliveryRoute implements Cloneable{
         deliveryPointList.add(deliveryPoint);
     }
 
+    public DeliveryPoint remove(final int index){
+        final DeliveryPoint deliveryPoint = deliveryPointList.get(index);
+
+        if(deliveryPointList.size() - 1 == 0){
+            length = 0;
+        } else {
+            final DeliveryPoint previousPoint, nextPoint;
+            if((index != 0)) {
+                previousPoint = deliveryPointList.get(index - 1);
+            }
+            else {
+                previousPoint = warehouse;
+            }
+
+            if(index != deliveryPointList.size() - 1){
+                nextPoint = deliveryPointList.get(index + 1);
+            } else {
+                nextPoint = warehouse;
+            }
+
+            length -= calculateDistance(previousPoint, deliveryPoint);
+            length -= calculateDistance(deliveryPoint, nextPoint);
+
+            length += calculateDistance(previousPoint, nextPoint);
+        }
+
+        deliveryPointList.remove(index);
+
+        totalQuantity -= deliveryPoint.getQuantity();
+
+        return deliveryPoint;
+    }
+
     public List<DeliveryPoint> getDeliveryPointList() {
         return deliveryPointList;
     }

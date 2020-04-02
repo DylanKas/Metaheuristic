@@ -8,8 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class DeliveryPointController {
     private static final String SEPARATOR = ";";
@@ -32,8 +36,9 @@ public class DeliveryPointController {
     }
 
     public static DeliveryPointController initializeFromFile(final String fileName) {
+        BufferedReader reader = null;
         try {
-            final BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            reader = new BufferedReader(new FileReader(fileName));
             final List<DeliveryPoint> deliveryPointList = new ArrayList<>();
 
             reader.readLine();
@@ -53,6 +58,14 @@ public class DeliveryPointController {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if(reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }
@@ -104,8 +117,49 @@ public class DeliveryPointController {
         final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
         final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
         int insertIndex;
-        while((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex);
+        while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex) ;
         deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
+
+        return deliveryRoutes;
+    }
+
+    public List<DeliveryRoute> generateRandomNeighborSolution2() {
+        final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
+        final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
+        final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
+        final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
+        final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(deliveryPointToMoveIndex);
+        int routeToInsertIndex;
+        final Set<Integer> unvisitedIndexList = new HashSet<>(IntStream.rangeClosed(0, deliveryRoutes.size() - 1)
+                .boxed().collect(Collectors.toList()));
+        unvisitedIndexList.remove(deliveryRouteToModifyIndex);
+
+        boolean hasInserted = false;
+
+        while (!unvisitedIndexList.isEmpty() && !hasInserted) {
+            routeToInsertIndex = RANDOM.nextInt(deliveryRoutes.size());
+            final DeliveryRoute deliveryRouteToInsert = deliveryRoutes.get(routeToInsertIndex);
+            if (deliveryRouteToInsert.getLength() + deliveryPointToMove.getQuantity() > MAX_QUANTITY) {
+                unvisitedIndexList.remove(routeToInsertIndex);
+            }
+            else {
+                final List<DeliveryPoint> deliveryPointListToInsert = deliveryRouteToInsert.getDeliveryPointList();
+                int insertIndex;
+                while ((insertIndex = RANDOM.nextInt(deliveryPointListToInsert.size())) == deliveryPointToMoveIndex);
+                deliveryPointListToInsert.add(insertIndex, deliveryPointToMove);
+                hasInserted = true;
+            }
+        }
+
+        if(deliveryPointListToModify.isEmpty()){
+            deliveryRoutes.remove(deliveryRouteToModifyIndex);
+        }
+
+        if(!hasInserted){
+            final DeliveryRoute newDeliveryRoute = new DeliveryRoute(getWarehouse());
+            newDeliveryRoute.add(deliveryPointToMove);
+            deliveryRoutes.add(newDeliveryRoute);
+        }
 
         return deliveryRoutes;
     }

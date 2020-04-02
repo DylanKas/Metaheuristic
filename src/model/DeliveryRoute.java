@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeliveryRoute {
+public class DeliveryRoute implements Cloneable{
     private List<DeliveryPoint> deliveryPointList = new ArrayList<>();
     private double length = 0d;
     private int totalQuantity = 0;
@@ -39,5 +39,12 @@ public class DeliveryRoute {
 
     private double calculateDistance(final DeliveryPoint startPoint, final DeliveryPoint endPoint) {
         return Math.sqrt((endPoint.getX() - startPoint.getX())^2 + (endPoint.getY() - startPoint.getY())^2);
+    }
+
+    @Override
+    public DeliveryRoute clone() {
+        final DeliveryRoute clone = new DeliveryRoute(warehouse);
+        deliveryPointList.stream().forEach(clone::add);
+        return clone;
     }
 }

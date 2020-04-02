@@ -9,10 +9,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DeliveryPointController {
     private static final String SEPARATOR = ";";
     private static final int MAX_QUANTITY = 100;
+    private static final Random RANDOM = new Random();
 
     private List<DeliveryPoint> deliveryPointList;
 
@@ -91,6 +93,18 @@ public class DeliveryPointController {
             }
         }
 
+        return solution;
+    }
+
+    public List<DeliveryRoute> generateRandomNeighborSolution(final List<DeliveryRoute> currentSolution) {
+        final List<DeliveryRoute> solution = new ArrayList<>(currentSolution);
+        final int deliveryRouteToModifyIndex = RANDOM.nextInt(solution.size());
+        final DeliveryRoute deliveryRouteToModify = solution.get(deliveryRouteToModifyIndex);
+        final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
+        final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.getDeliveryPointList().remove(deliveryPointToMoveIndex);
+        int insertIndex;
+        while((insertIndex = RANDOM.nextInt()) == deliveryPointToMoveIndex);
+        deliveryRouteToModify.getDeliveryPointList().add(insertIndex, deliveryPointToMove);
         return solution;
     }
 }

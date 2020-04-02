@@ -22,6 +22,8 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import model.DeliveryPoint;
 
+import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,33 +68,8 @@ public class Map {
         buttonReset.setOnAction(buttonResetHandler);
 
         //Set choice box with data files
-        List<String> namesList = Arrays.asList(
-                "A3205.txt"
-                ,"A3305.txt"
-                ,"A3306.txt"
-                ,"A3405.txt"
-                ,"A3605.txt"
-                ,"A3705.txt"
-                ,"A3706.txt"
-                ,"A3805.txt"
-                ,"A3905.txt"
-                ,"A3906.txt"
-                ,"A4406.txt"
-                ,"A4506.txt"
-                ,"A4507.txt"
-                ,"A4607.txt"
-                ,"A5307.txt"
-                ,"A5407.txt"
-                ,"A5509.txt"
-                ,"A6009.txt"
-                ,"A6109.txt"
-                ,"A6208.txt"
-                ,"A6310.txt"
-                ,"A6409.txt"
-                ,"A6509.txt"
-                ,"A6909.txt"
-                ,"A8010.txt");
-        ArrayList<String> choices = new ArrayList<>(namesList);
+        final File folder = new File("./resources/data");
+        ArrayList<String> choices = new ArrayList<>(listFilesForFolder(folder));
         ObservableList<String> list = FXCollections.observableArrayList(choices);
         dataChoice.setItems(list);
 
@@ -110,6 +87,18 @@ public class Map {
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
         drawHouses(deliveryPointController.getDeliveryPointList());
+    }
+
+    public ArrayList<String> listFilesForFolder(final File folder) {
+        ArrayList<String> files = new ArrayList<String>();
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                files.add(fileEntry.getName());
+            }
+        }
+        return files;
     }
 
     private void drawHouses(List<DeliveryPoint> lists){

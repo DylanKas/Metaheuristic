@@ -71,7 +71,22 @@ public class Map {
         EventHandler<ActionEvent> buttonResetHandler = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                resetMap();
+                //resetMap();
+                try
+                {
+                    Thread.sleep(1000);
+                }
+                catch(InterruptedException ex)
+                {
+                    Thread.currentThread().interrupt();
+                }
+                try {
+                    runAndWait(Map.this::resetMap);
+                } finally {
+                    drawHouses(deliveryPointController.getDeliveryPointList());
+                    System.out.println("DRAW ROUTES");
+                    drawRoutes(deliveryPointController.generateRandomNeighborSolution(deliveryPointController.generateOrderedSolution()));
+                }
             }
         };
         Button buttonReset = (Button) stage.getScene().lookup("#buttonReset");
@@ -89,6 +104,7 @@ public class Map {
         dataChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
             // if the item of the list is changed
             public void changed(ObservableValue ov, Number value, Number new_value) {
+
                 logAction("---- Data selected: " + list.get(new_value.intValue()));
 
                 // queue on JavaFX thread and wait for completion
@@ -100,6 +116,7 @@ public class Map {
                     System.out.println("DRAW ROUTES");
                     drawRoutes(deliveryPointController.generateOrderedSolution());
                 }
+
             }
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
@@ -146,12 +163,28 @@ public class Map {
             return;
         }
         DeliveryPoint warehouse = lists.get(0).getWarehouse();
+        int routeIteration = 0;
         for (DeliveryRoute deliveryRoute : lists) {
+            routeIteration++;
             int iteration = 0;
             List<DeliveryPoint> routes = deliveryRoute.getDeliveryPointList();
             double lastX = 0d;
             double lastY = 0d;
-            Paint routeColor = Color.color(Math.random(), Math.random(), Math.random());
+
+
+            String[] colors = {"#FF6633", "#FFB399", "#FF33FF", "#FFFF99", "#00B3E6",
+                    "#E6B333", "#3366E6", "#999966", "#99FF99", "#B34D4D",
+                    "#80B300", "#809900", "#E6B3B3", "#6680B3", "#66991A",
+                    "#FF99E6", "#CCFF1A", "#FF1A66", "#E6331A", "#33FFCC",
+                    "#66994D", "#B366CC", "#4D8000", "#B33300", "#CC80CC",
+                    "#66664D", "#991AFF", "#E666FF", "#4DB3FF", "#1AB399",
+                    "#E666B3", "#33991A", "#CC9999", "#B3B31A", "#00E680",
+                    "#4D8066", "#809980", "#E6FF80", "#1AFF33", "#999933",
+                    "#FF3380", "#CCCC00", "#66E64D", "#4D80CC", "#9900B3",
+                    "#E64D66", "#4DB380", "#FF4D4D", "#99E6E6", "#6666FF"};
+
+
+            Paint routeColor = Color.web(colors[routeIteration]);
             Line lineBegin = new Line();
             Line lineEnd = new Line();
             lineBegin.setStroke(routeColor);

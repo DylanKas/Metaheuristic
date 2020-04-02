@@ -13,7 +13,7 @@ public class DeliveryRoute {
         this.warehouse = warehouse;
     }
 
-    private void add(final DeliveryPoint deliveryPoint) {
+    public void add(final DeliveryPoint deliveryPoint) {
         if(deliveryPointList.size() == 0){
             length += calculateDistance(warehouse, deliveryPoint);
         } else {
@@ -25,7 +25,19 @@ public class DeliveryRoute {
         deliveryPointList.add(deliveryPoint);
     }
 
+    public List<DeliveryPoint> getDeliveryPointList() {
+        return deliveryPointList;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
     private double calculateDistance(final DeliveryPoint startPoint, final DeliveryPoint endPoint) {
-        return Math.sqrt((endPoint.getX() - startPoint.getX())^2 + (endPoint.getY() - startPoint.getY()));
+        return Math.sqrt((endPoint.getX() - startPoint.getX())^2 + (endPoint.getY() - startPoint.getY())^2);
     }
 }

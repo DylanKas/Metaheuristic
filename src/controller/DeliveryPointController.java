@@ -1,6 +1,7 @@
 package controller;
 
 import model.DeliveryPoint;
+import model.DeliveryRoute;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class DeliveryPointController {
     private static final String SEPARATOR = ";";
+    private static final int MAX_QUANTITY = 100;
 
     private List<DeliveryPoint> deliveryPointList;
 
@@ -51,5 +53,31 @@ public class DeliveryPointController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<DeliveryRoute> generateSolution() {
+        final List<DeliveryRoute> solution = new ArrayList<>();
+        final DeliveryPoint warehouse = deliveryPointList.get(0);
+
+        solution.add(new DeliveryRoute(warehouse));
+
+        for(final DeliveryPoint deliveryPoint : deliveryPointList) {
+            if(deliveryPoint.getQuantity() != 0){
+                final DeliveryRoute lastDeliveryRoute = solution.get(solution.size() - 1);
+
+                if(lastDeliveryRoute.getTotalQuantity() + deliveryPoint.getQuantity() < MAX_QUANTITY ){
+                    lastDeliveryRoute.add(deliveryPoint);
+                }
+                else {
+                    final DeliveryRoute newDeliveryRoute = new DeliveryRoute(warehouse);
+
+                    newDeliveryRoute.add(deliveryPoint);
+
+                    solution.add(newDeliveryRoute);
+                }
+            }
+        }
+
+        return solution;
     }
 }

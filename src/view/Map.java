@@ -66,7 +66,32 @@ public class Map {
         buttonReset.setOnAction(buttonResetHandler);
 
         //Set choice box with data files
-        List<String> namesList = Arrays.asList( "data01.txt", "data02.txt", "data03.txt","data04.txt","data05.txt");
+        List<String> namesList = Arrays.asList(
+                "A3205.txt"
+                ,"A3305.txt"
+                ,"A3306.txt"
+                ,"A3405.txt"
+                ,"A3605.txt"
+                ,"A3705.txt"
+                ,"A3706.txt"
+                ,"A3805.txt"
+                ,"A3905.txt"
+                ,"A3906.txt"
+                ,"A4406.txt"
+                ,"A4506.txt"
+                ,"A4507.txt"
+                ,"A4607.txt"
+                ,"A5307.txt"
+                ,"A5407.txt"
+                ,"A5509.txt"
+                ,"A6009.txt"
+                ,"A6109.txt"
+                ,"A6208.txt"
+                ,"A6310.txt"
+                ,"A6409.txt"
+                ,"A6509.txt"
+                ,"A6909.txt"
+                ,"A8010.txt");
         ArrayList<String> choices = new ArrayList<>(namesList);
         ObservableList<String> list = FXCollections.observableArrayList(choices);
         dataChoice.setItems(list);
@@ -79,20 +104,21 @@ public class Map {
             public void changed(ObservableValue ov, Number value, Number new_value) {
                 logAction("---- Data selected: " + list.get(new_value.intValue()));
                 resetMap();
-                deliveryPointController = DeliveryPointController.initializeFromFile("./resources/"+list.get(new_value.intValue()));
+                deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(new_value.intValue()));
                 drawHouses(deliveryPointController.getDeliveryPointList());
             }
         });
-        deliveryPointController = DeliveryPointController.initializeFromFile("./resources/"+list.get(0));
+        deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
         drawHouses(deliveryPointController.getDeliveryPointList());
     }
 
     private void drawHouses(List<DeliveryPoint> lists){
+        map.setStyle("-fx-background-color: #" + "76AE66");
         for (DeliveryPoint deliveryPoint : lists) {
-            drawHouse(deliveryPoint.getX(),deliveryPoint.getY(),deliveryPoint.getQuantity());
+            drawHouse(deliveryPoint);
         }
         logAction("- Delivery points added");
-        drawWarehouse(deliveryPointController.getWarehouse().getX(),deliveryPointController.getWarehouse().getY());
+        drawWarehouse(deliveryPointController.getWarehouse());
         logAction("- Warehouse added (x: "+deliveryPointController.getWarehouse().getX()+", y: "+deliveryPointController.getWarehouse().getY()+")");
     }
     private void logAction(String action){
@@ -106,34 +132,37 @@ public class Map {
         logs.setEditable(false);
     }
 
-    public void drawHouse(int x, int y, int q){
+    public void drawHouse(DeliveryPoint deliveryPoint){
         Platform.runLater(() -> {
            //Circle circle = new Circle(OFFSET_X+LENGTH_X*x, OFFSET_Y+LENGTH_Y*y, DEFAULT_NODE_RADIUS);
            //circle.setFill(DEFAULT_NODE_FILL);
            //circle.setStroke(DEFAULT_NODE_STROKE);
            //map.getChildren().add(circle);
            //map.setStyle("-fx-background-color: #" + "ffffff");
+            if(deliveryPoint.getI() == 0){
+                return;
+            }
             Image house = new Image("/house2.png");
             ImageView imageView = new ImageView();
             imageView.setImage(house);
-            imageView.setX(OFFSET_X+LENGTH_X*x);
-            imageView.setY(OFFSET_Y+LENGTH_Y*y);
-            imageView.setFitHeight(30);
-            imageView.setFitWidth(30);
+            imageView.setX(OFFSET_X+LENGTH_X*deliveryPoint.getX());
+            imageView.setY(OFFSET_Y+LENGTH_Y*deliveryPoint.getY());
+            imageView.setFitHeight(20);
+            imageView.setFitWidth(20);
             map.getChildren().add(imageView);
         });
     }
 
-    public void drawWarehouse(int x, int y){
+    public void drawWarehouse(DeliveryPoint warehouse){
         Platform.runLater(() -> {
-            Image warehouse = new Image("/warehouse2.png");
-            ImageView imageView = new ImageView();
-            imageView.setImage(warehouse);
-            imageView.setX(OFFSET_X+LENGTH_X*x);
-            imageView.setY(OFFSET_Y+LENGTH_Y*y);
-            imageView.setFitHeight(30);
-            imageView.setFitWidth(30);
-            map.getChildren().add(imageView);
+            Image warehouseImage = new Image("/warehouse2.png");
+            ImageView imageView2 = new ImageView();
+            imageView2.setImage(warehouseImage);
+            imageView2.setX(OFFSET_X+LENGTH_X*warehouse.getX());
+            imageView2.setY(OFFSET_Y+LENGTH_Y*warehouse.getY());
+            imageView2.setFitHeight(45);
+            imageView2.setFitWidth(45);
+            map.getChildren().add(imageView2);
         });
     }
 

@@ -1,6 +1,7 @@
 package model;
 
 public class DeliveryPoint {
+    private int i;
     private int x;
     private int y;
     private int quantity;
@@ -27,5 +28,13 @@ public class DeliveryPoint {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    public void setI(int i) {
+        this.i = i;
     }
 }

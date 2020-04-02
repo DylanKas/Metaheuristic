@@ -16,7 +16,7 @@ public class DeliveryPointController {
 
     private List<DeliveryPoint> deliveryPointList;
 
-    private DeliveryPointController (final List<DeliveryPoint> deliveryPointList) {
+    private DeliveryPointController(final List<DeliveryPoint> deliveryPointList) {
         this.deliveryPointList = deliveryPointList;
     }
 
@@ -24,7 +24,7 @@ public class DeliveryPointController {
         return deliveryPointList;
     }
 
-    public DeliveryPoint getWarehouse(){
+    public DeliveryPoint getWarehouse() {
         return deliveryPointList.get(0);
     }
 
@@ -36,8 +36,7 @@ public class DeliveryPointController {
             reader.readLine();
 
             String line;
-            while ((line = reader.readLine()) != null)
-            {
+            while ((line = reader.readLine()) != null) {
                 final DeliveryPoint deliveryPoint = new DeliveryPoint();
                 String[] splitLine = line.split(SEPARATOR);
                 deliveryPoint.setI(Integer.parseInt(splitLine[0]));
@@ -55,26 +54,40 @@ public class DeliveryPointController {
         return null;
     }
 
-    public List<DeliveryRoute> generateSolution() {
+    public List<DeliveryRoute> generateOrderedSolution() {
         final List<DeliveryRoute> solution = new ArrayList<>();
         final DeliveryPoint warehouse = deliveryPointList.get(0);
 
         solution.add(new DeliveryRoute(warehouse));
 
-        for(final DeliveryPoint deliveryPoint : deliveryPointList) {
-            if(deliveryPoint.getQuantity() != 0){
+        for (final DeliveryPoint deliveryPoint : deliveryPointList) {
+            if (deliveryPoint.getQuantity() != 0) {
                 final DeliveryRoute lastDeliveryRoute = solution.get(solution.size() - 1);
 
-                if(lastDeliveryRoute.getTotalQuantity() + deliveryPoint.getQuantity() < MAX_QUANTITY ){
+                if (lastDeliveryRoute.getTotalQuantity() + deliveryPoint.getQuantity() < MAX_QUANTITY) {
                     lastDeliveryRoute.add(deliveryPoint);
-                }
-                else {
+                } else {
                     final DeliveryRoute newDeliveryRoute = new DeliveryRoute(warehouse);
 
                     newDeliveryRoute.add(deliveryPoint);
 
                     solution.add(newDeliveryRoute);
                 }
+            }
+        }
+
+        return solution;
+    }
+
+    public List<DeliveryRoute> generateGreedySolution() {
+        final List<DeliveryRoute> solution = new ArrayList<>();
+        final DeliveryPoint warehouse = deliveryPointList.get(0);
+
+        for (final DeliveryPoint deliveryPoint : deliveryPointList) {
+            if (deliveryPoint.getQuantity() != 0) {
+                final DeliveryRoute deliveryRoute = new DeliveryRoute(warehouse);
+                deliveryRoute.add(deliveryPoint);
+                solution.add(deliveryRoute);
             }
         }
 

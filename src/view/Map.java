@@ -18,9 +18,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import model.DeliveryPoint;
+import model.DeliveryRoute;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 
 public class Map {
@@ -37,6 +41,12 @@ public class Map {
 
     static double LENGTH_X = 9;
     static double LENGTH_Y = 7.5;
+
+    static double HOUSE_IMAGE_HEIGHT = 20;
+    static double HOUSE_IMAGE_WIDTH = 20;
+
+    static double WAREHOUSE_IMAGE_HEIGHT = 45;
+    static double WAREHOUSE_IMAGE_WIDTH = 45;
 
     static Color DEFAULT_NODE_STROKE = Color.BLACK;
     static Color DEFAULT_NODE_FILL = javafx.scene.paint.Color.rgb(212,212,212);
@@ -80,13 +90,22 @@ public class Map {
             // if the item of the list is changed
             public void changed(ObservableValue ov, Number value, Number new_value) {
                 logAction("---- Data selected: " + list.get(new_value.intValue()));
-                resetMap();
-                deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(new_value.intValue()));
-                drawHouses(deliveryPointController.getDeliveryPointList());
+
+                // queue on JavaFX thread and wait for completion
+                try {
+                    runAndWait(Map.this::resetMap);
+                } finally {
+                    deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(new_value.intValue()));
+                    drawHouses(deliveryPointController.getDeliveryPointList());
+                    System.out.println("DRAW ROUTES");
+                    drawRoutes(deliveryPointController.generateSolution());
+                }
             }
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
         drawHouses(deliveryPointController.getDeliveryPointList());
+        drawRoutes(deliveryPointController.generateSolution());
+
     }
 
     public ArrayList<String> listFilesForFolder(final File folder) {
@@ -121,23 +140,73 @@ public class Map {
         logs.setEditable(false);
     }
 
+    public void drawRoutes(List<DeliveryRoute> lists){
+        if(lists.size()==0){
+            System.out.println("Empty DeliveryRoutes");
+            return;
+        }
+        DeliveryPoint warehouse = lists.get(0).getWarehouse();
+        for (DeliveryRoute deliveryRoute : lists) {
+            int iteration = 0;
+            List<DeliveryPoint> routes = deliveryRoute.getDeliveryPointList();
+            double lastX = 0d;
+            double lastY = 0d;
+            Paint routeColor = Color.color(Math.random(), Math.random(), Math.random());
+            Line lineBegin = new Line();
+            Line lineEnd = new Line();
+            lineBegin.setStroke(routeColor);
+            lineBegin.setStrokeWidth(2);
+            lineEnd.setStroke(routeColor);
+            lineEnd.setStrokeWidth(2);
+
+            //first route from warehouse
+            lineBegin.setStartX(OFFSET_X+LENGTH_X*warehouse.getX());
+            lineBegin.setStartY(OFFSET_Y+LENGTH_Y*warehouse.getY());
+            lineBegin.setEndX(OFFSET_X+LENGTH_X*routes.get(0).getX());
+            lineBegin.setEndY(OFFSET_Y+LENGTH_Y*routes.get(0).getY());
+
+
+            //last route to warehouse
+            lineEnd.setStartX(OFFSET_X+LENGTH_X*routes.get(routes.size()-1).getX());
+            lineEnd.setStartY(OFFSET_Y+LENGTH_Y*routes.get(routes.size()-1).getY());
+            lineEnd.setEndX(OFFSET_X+LENGTH_X*warehouse.getX());
+            lineEnd.setEndY(OFFSET_Y+LENGTH_Y*warehouse.getY());
+
+            map.getChildren().add(lineBegin);
+            map.getChildren().add(lineEnd);
+            for (DeliveryPoint deliveryPoint : routes) {
+                Line line = new Line();
+                line.setStroke(routeColor);
+                line.setStrokeWidth(2);
+
+                if(iteration!=0){//Start from warehouse
+                    line.setStartX(OFFSET_X+LENGTH_X*lastX);
+                    line.setStartY(OFFSET_Y+LENGTH_Y*lastY);
+                    line.setEndX(OFFSET_X+LENGTH_X*deliveryPoint.getX());
+                    line.setEndY(OFFSET_Y+LENGTH_Y*deliveryPoint.getY());
+                }
+
+                lastX = deliveryPoint.getX();
+                lastY = deliveryPoint.getY();
+
+                map.getChildren().add(line);
+                iteration++;
+            }
+        }
+    }
+
     public void drawHouse(DeliveryPoint deliveryPoint){
         Platform.runLater(() -> {
-           //Circle circle = new Circle(OFFSET_X+LENGTH_X*x, OFFSET_Y+LENGTH_Y*y, DEFAULT_NODE_RADIUS);
-           //circle.setFill(DEFAULT_NODE_FILL);
-           //circle.setStroke(DEFAULT_NODE_STROKE);
-           //map.getChildren().add(circle);
-           //map.setStyle("-fx-background-color: #" + "ffffff");
             if(deliveryPoint.getI() == 0){
                 return;
             }
             Image house = new Image("/house2.png");
             ImageView imageView = new ImageView();
             imageView.setImage(house);
-            imageView.setX(OFFSET_X+LENGTH_X*deliveryPoint.getX());
-            imageView.setY(OFFSET_Y+LENGTH_Y*deliveryPoint.getY());
-            imageView.setFitHeight(20);
-            imageView.setFitWidth(20);
+            imageView.setX(OFFSET_X+LENGTH_X*deliveryPoint.getX()-HOUSE_IMAGE_HEIGHT/2);
+            imageView.setY(OFFSET_Y+LENGTH_Y*deliveryPoint.getY()-HOUSE_IMAGE_WIDTH/2);
+            imageView.setFitHeight(HOUSE_IMAGE_HEIGHT);
+            imageView.setFitWidth(HOUSE_IMAGE_WIDTH);
             map.getChildren().add(imageView);
         });
     }
@@ -147,17 +216,50 @@ public class Map {
             Image warehouseImage = new Image("/warehouse2.png");
             ImageView imageView2 = new ImageView();
             imageView2.setImage(warehouseImage);
-            imageView2.setX(OFFSET_X+LENGTH_X*warehouse.getX());
-            imageView2.setY(OFFSET_Y+LENGTH_Y*warehouse.getY());
-            imageView2.setFitHeight(45);
-            imageView2.setFitWidth(45);
+            imageView2.setX(OFFSET_X+LENGTH_X*warehouse.getX()-WAREHOUSE_IMAGE_HEIGHT/2);
+            imageView2.setY(OFFSET_Y+LENGTH_Y*warehouse.getY()-WAREHOUSE_IMAGE_WIDTH/2);
+            imageView2.setFitHeight(WAREHOUSE_IMAGE_HEIGHT);
+            imageView2.setFitWidth(WAREHOUSE_IMAGE_WIDTH);
             map.getChildren().add(imageView2);
         });
     }
 
     public void resetMap(){
         logAction("- Map has been reset");
-        Platform.runLater(() -> map.getChildren().clear());
+        map.getChildren().clear();
+    }
+    /**
+     * Runs the specified {@link Runnable} on the
+     * JavaFX application thread and waits for completion.
+     *
+     * @param action the {@link Runnable} to run
+     * @throws NullPointerException if {@code action} is {@code null}
+     */
+    public static void runAndWait(Runnable action) {
+        if (action == null)
+            throw new NullPointerException("action");
+
+        // run synchronously on JavaFX thread
+        if (Platform.isFxApplicationThread()) {
+            action.run();
+            return;
+        }
+
+        // queue on JavaFX thread and wait for completion
+        final CountDownLatch doneLatch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                action.run();
+            } finally {
+                doneLatch.countDown();
+            }
+        });
+
+        try {
+            doneLatch.await();
+        } catch (InterruptedException e) {
+            // ignore exception
+        }
     }
 
 

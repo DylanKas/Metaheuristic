@@ -100,11 +100,12 @@ public class DeliveryPointController {
         final List<DeliveryRoute> solution = new ArrayList<>(currentSolution);
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(solution.size());
         final DeliveryRoute deliveryRouteToModify = solution.get(deliveryRouteToModifyIndex);
+        final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
         final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
-        final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.getDeliveryPointList().remove(deliveryPointToMoveIndex);
+        final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
         int insertIndex;
-        while((insertIndex = RANDOM.nextInt()) == deliveryPointToMoveIndex);
-        deliveryRouteToModify.getDeliveryPointList().add(insertIndex, deliveryPointToMove);
+        while((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex);
+        deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
         return solution;
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 public class DeliveryRoute {
     private List<DeliveryPoint> deliveryPointList = new ArrayList<>();
     private double length = 0d;
-    private int totalQuantity;
+    private int totalQuantity = 0;
     private DeliveryPoint warehouse;
 
     public DeliveryRoute(final DeliveryPoint warehouse) {
@@ -17,7 +17,7 @@ public class DeliveryRoute {
         if(deliveryPointList.size() == 0){
             length += calculateDistance(warehouse, deliveryPoint);
         } else {
-
+            length += calculateDistance(deliveryPointList.get(deliveryPointList.size() - 1), deliveryPoint);
         }
 
         totalQuantity += deliveryPoint.getQuantity();

@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -114,11 +115,14 @@ public class DeliveryPointController {
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
-        final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
-        final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
-        int insertIndex;
-        while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex) ;
-        deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
+        //TODO remove when we hae real operators
+        if(deliveryPointListToModify.size() > 0){
+            final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
+            final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
+            int insertIndex;
+            while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex) ;
+            deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
+        }
 
         return deliveryRoutes;
     }
@@ -129,18 +133,20 @@ public class DeliveryPointController {
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
         final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
         final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(deliveryPointToMoveIndex);
-        int routeToInsertIndex;
-        final Set<Integer> unvisitedIndexList = new HashSet<>(IntStream.rangeClosed(0, deliveryRoutes.size() - 1)
-                .boxed().collect(Collectors.toList()));
-        unvisitedIndexList.remove(deliveryRouteToModifyIndex);
+        final List<Integer> indexToVisitList = IntStream.rangeClosed(0, deliveryRoutes.size() - 1)
+                .boxed().collect(Collectors.toList());
+        indexToVisitList.remove(deliveryRouteToModifyIndex);
+
+        Collections.shuffle(indexToVisitList);
 
         boolean hasInserted = false;
+        int currentIndex = 0;
 
-        while (!unvisitedIndexList.isEmpty() && !hasInserted) {
-            routeToInsertIndex = RANDOM.nextInt(deliveryRoutes.size());
+        while (!hasInserted && currentIndex < indexToVisitList.size()) {
+            final int routeToInsertIndex = indexToVisitList.get(currentIndex);
             final DeliveryRoute deliveryRouteToInsert = deliveryRoutes.get(routeToInsertIndex);
-            if (deliveryRouteToInsert.getLength() + deliveryPointToMove.getQuantity() > MAX_QUANTITY) {
-                unvisitedIndexList.remove(routeToInsertIndex);
+            if (deliveryRouteToInsert.getTotalQuantity() + deliveryPointToMove.getQuantity() > MAX_QUANTITY) {
+                indexToVisitList.remove(routeToInsertIndex);
             }
             else {
                 final List<DeliveryPoint> deliveryPointListToInsert = deliveryRouteToInsert.getDeliveryPointList();
@@ -149,6 +155,7 @@ public class DeliveryPointController {
                 deliveryPointListToInsert.add(insertIndex, deliveryPointToMove);
                 hasInserted = true;
             }
+            currentIndex++;
         }
 
         if(deliveryPointListToModify.isEmpty()){

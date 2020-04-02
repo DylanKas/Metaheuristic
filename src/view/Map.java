@@ -66,7 +66,32 @@ public class Map {
         buttonReset.setOnAction(buttonResetHandler);
 
         //Set choice box with data files
-        List<String> namesList = Arrays.asList( "data01.txt", "data02.txt", "data03.txt","data04.txt","data05.txt");
+        List<String> namesList = Arrays.asList(
+                "A3205.txt"
+                ,"A3305.txt"
+                ,"A3306.txt"
+                ,"A3405.txt"
+                ,"A3605.txt"
+                ,"A3705.txt"
+                ,"A3706.txt"
+                ,"A3805.txt"
+                ,"A3905.txt"
+                ,"A3906.txt"
+                ,"A4406.txt"
+                ,"A4506.txt"
+                ,"A4507.txt"
+                ,"A4607.txt"
+                ,"A5307.txt"
+                ,"A5407.txt"
+                ,"A5509.txt"
+                ,"A6009.txt"
+                ,"A6109.txt"
+                ,"A6208.txt"
+                ,"A6310.txt"
+                ,"A6409.txt"
+                ,"A6509.txt"
+                ,"A6909.txt"
+                ,"A8010.txt");
         ArrayList<String> choices = new ArrayList<>(namesList);
         ObservableList<String> list = FXCollections.observableArrayList(choices);
         dataChoice.setItems(list);
@@ -79,11 +104,11 @@ public class Map {
             public void changed(ObservableValue ov, Number value, Number new_value) {
                 logAction("---- Data selected: " + list.get(new_value.intValue()));
                 resetMap();
-                deliveryPointController = DeliveryPointController.initializeFromFile("./resources/"+list.get(new_value.intValue()));
+                deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(new_value.intValue()));
                 drawHouses(deliveryPointController.getDeliveryPointList());
             }
         });
-        deliveryPointController = DeliveryPointController.initializeFromFile("./resources/"+list.get(0));
+        deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
         drawHouses(deliveryPointController.getDeliveryPointList());
     }
 

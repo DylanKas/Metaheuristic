@@ -19,7 +19,7 @@ public class Main extends Application {
         Map map = new Map(primaryStage);
         primaryStage.show();
 
-        final DeliveryPointController controller = DeliveryPointController.initializeFromFile("./resources/data01.txt");
+        final DeliveryPointController controller = DeliveryPointController.initializeFromFile("./resources/data/A3205.txt");
     }
 
 

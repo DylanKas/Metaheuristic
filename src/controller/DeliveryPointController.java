@@ -17,6 +17,7 @@ public class DeliveryPointController {
     private static final Random RANDOM = new Random();
 
     private List<DeliveryPoint> deliveryPointList;
+    private List<DeliveryRoute> deliveryRoutes;
 
     private DeliveryPointController(final List<DeliveryPoint> deliveryPointList) {
         this.deliveryPointList = deliveryPointList;
@@ -57,14 +58,14 @@ public class DeliveryPointController {
     }
 
     public List<DeliveryRoute> generateOrderedSolution() {
-        final List<DeliveryRoute> solution = new ArrayList<>();
+        deliveryRoutes = new ArrayList<>();
         final DeliveryPoint warehouse = deliveryPointList.get(0);
 
-        solution.add(new DeliveryRoute(warehouse));
+        deliveryRoutes.add(new DeliveryRoute(warehouse));
 
         for (final DeliveryPoint deliveryPoint : deliveryPointList) {
             if (deliveryPoint.getQuantity() != 0) {
-                final DeliveryRoute lastDeliveryRoute = solution.get(solution.size() - 1);
+                final DeliveryRoute lastDeliveryRoute = deliveryRoutes.get(deliveryRoutes.size() - 1);
 
                 if (lastDeliveryRoute.getTotalQuantity() + deliveryPoint.getQuantity() < MAX_QUANTITY) {
                     lastDeliveryRoute.add(deliveryPoint);
@@ -73,39 +74,39 @@ public class DeliveryPointController {
 
                     newDeliveryRoute.add(deliveryPoint);
 
-                    solution.add(newDeliveryRoute);
+                    deliveryRoutes.add(newDeliveryRoute);
                 }
             }
         }
 
-        return solution;
+        return deliveryRoutes;
     }
 
     public List<DeliveryRoute> generateGreedySolution() {
-        final List<DeliveryRoute> solution = new ArrayList<>();
+        deliveryRoutes = new ArrayList<>();
         final DeliveryPoint warehouse = deliveryPointList.get(0);
 
         for (final DeliveryPoint deliveryPoint : deliveryPointList) {
             if (deliveryPoint.getQuantity() != 0) {
                 final DeliveryRoute deliveryRoute = new DeliveryRoute(warehouse);
                 deliveryRoute.add(deliveryPoint);
-                solution.add(deliveryRoute);
+                deliveryRoutes.add(deliveryRoute);
             }
         }
 
-        return solution;
+        return deliveryRoutes;
     }
 
-    public List<DeliveryRoute> generateRandomNeighborSolution(final List<DeliveryRoute> currentSolution) {
-        final List<DeliveryRoute> solution = new ArrayList<>(currentSolution);
-        final int deliveryRouteToModifyIndex = RANDOM.nextInt(solution.size());
-        final DeliveryRoute deliveryRouteToModify = solution.get(deliveryRouteToModifyIndex);
+    public List<DeliveryRoute> generateRandomNeighborSolution() {
+        final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
+        final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
         final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
         final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
         int insertIndex;
         while((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex);
         deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
-        return solution;
+
+        return deliveryRoutes;
     }
 }

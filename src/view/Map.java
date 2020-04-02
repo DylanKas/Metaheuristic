@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -53,7 +54,9 @@ public class Map {
     static double DEFAULT_NODE_RADIUS = 5;
 
     private Stage stage;
-    private Pane map;
+    private StackPane stackpane;
+    private Pane mapLines;
+    private Pane mapHouses;
     private ChoiceBox dataChoice;
     private TextArea logs;
 
@@ -72,20 +75,10 @@ public class Map {
             @Override
             public void handle(ActionEvent event) {
                 //resetMap();
-                try
-                {
-                    Thread.sleep(1000);
-                }
-                catch(InterruptedException ex)
-                {
-                    Thread.currentThread().interrupt();
-                }
                 try {
-                    runAndWait(Map.this::resetMap);
+                    runAndWait(Map.this::resetLines);
                 } finally {
-                    drawHouses(deliveryPointController.getDeliveryPointList());
-                    System.out.println("DRAW ROUTES");
-                    drawRoutes(deliveryPointController.generateRandomNeighborSolution(deliveryPointController.generateOrderedSolution()));
+                    drawRoutes(deliveryPointController.generateRandomNeighborSolution());
                 }
             }
         };
@@ -138,7 +131,7 @@ public class Map {
     }
 
     private void drawHouses(List<DeliveryPoint> lists){
-        map.setStyle("-fx-background-color: #" + "76AE66");
+        mapHouses.setStyle("-fx-background-color: #" + "76AE66");
         for (DeliveryPoint deliveryPoint : lists) {
             drawHouse(deliveryPoint);
         }
@@ -150,7 +143,10 @@ public class Map {
         logs.appendText(action + "\n");
     }
     private void lookupNodes() {
-        map = (Pane) stage.getScene().lookup("#map");
+        mapLines = (Pane) stage.getScene().lookup("#lines");
+        mapHouses = (Pane) stage.getScene().lookup("#houses");
+        stackpane = (StackPane) stage.getScene().lookup("#stackpane");
+        stackpane.getChildren().addAll(mapHouses,mapLines);
         dataChoice = (ChoiceBox) stage.getScene().lookup("#dataChoice");
         logs = (TextArea) stage.getScene().lookup("#logs");
         //Add text area for logs to logsPane
@@ -205,8 +201,8 @@ public class Map {
             lineEnd.setEndX(OFFSET_X+LENGTH_X*warehouse.getX());
             lineEnd.setEndY(OFFSET_Y+LENGTH_Y*warehouse.getY());
 
-            map.getChildren().add(lineBegin);
-            map.getChildren().add(lineEnd);
+            mapLines.getChildren().add(lineBegin);
+            mapLines.getChildren().add(lineEnd);
             for (DeliveryPoint deliveryPoint : routes) {
                 Line line = new Line();
                 line.setStroke(routeColor);
@@ -222,7 +218,7 @@ public class Map {
                 lastX = deliveryPoint.getX();
                 lastY = deliveryPoint.getY();
 
-                map.getChildren().add(line);
+                mapLines.getChildren().add(line);
                 iteration++;
             }
         }
@@ -240,7 +236,7 @@ public class Map {
             imageView.setY(OFFSET_Y+LENGTH_Y*deliveryPoint.getY()-HOUSE_IMAGE_WIDTH/2);
             imageView.setFitHeight(HOUSE_IMAGE_HEIGHT);
             imageView.setFitWidth(HOUSE_IMAGE_WIDTH);
-            map.getChildren().add(imageView);
+            mapHouses.getChildren().add(imageView);
         });
     }
 
@@ -253,13 +249,23 @@ public class Map {
             imageView2.setY(OFFSET_Y+LENGTH_Y*warehouse.getY()-WAREHOUSE_IMAGE_WIDTH/2);
             imageView2.setFitHeight(WAREHOUSE_IMAGE_HEIGHT);
             imageView2.setFitWidth(WAREHOUSE_IMAGE_WIDTH);
-            map.getChildren().add(imageView2);
+            mapHouses.getChildren().add(imageView2);
         });
     }
 
     public void resetMap(){
         logAction("- Map has been reset");
-        map.getChildren().clear();
+        resetHouses();
+        resetLines();
+    }
+
+
+    public void resetLines(){
+        mapLines.getChildren().clear();
+    }
+
+    public void resetHouses(){
+        mapLines.getChildren().clear();
     }
     /**
      * Runs the specified {@link Runnable} on the

@@ -60,7 +60,7 @@ public class DeliveryPointController {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(reader != null) {
+            if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
@@ -116,11 +116,13 @@ public class DeliveryPointController {
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
         //TODO remove when we hae real operators
-        if(deliveryPointListToModify.size() > 0){
+        if (deliveryPointListToModify.size() > 1) {
             final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
             final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
             int insertIndex;
-            while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex) ;
+            while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex) {
+                System.out.println(insertIndex);
+            }
             deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
         }
 
@@ -145,24 +147,20 @@ public class DeliveryPointController {
         while (!hasInserted && currentIndex < indexToVisitList.size()) {
             final int routeToInsertIndex = indexToVisitList.get(currentIndex);
             final DeliveryRoute deliveryRouteToInsert = deliveryRoutes.get(routeToInsertIndex);
-            if (deliveryRouteToInsert.getTotalQuantity() + deliveryPointToMove.getQuantity() > MAX_QUANTITY) {
-                indexToVisitList.remove(routeToInsertIndex);
-            }
-            else {
+            if (deliveryRouteToInsert.getTotalQuantity() + deliveryPointToMove.getQuantity() <= MAX_QUANTITY) {
                 final List<DeliveryPoint> deliveryPointListToInsert = deliveryRouteToInsert.getDeliveryPointList();
-                int insertIndex;
-                while ((insertIndex = RANDOM.nextInt(deliveryPointListToInsert.size())) == deliveryPointToMoveIndex);
-                deliveryPointListToInsert.add(insertIndex, deliveryPointToMove);
+                int insertIndex = RANDOM.nextInt(deliveryPointListToInsert.size());
+                deliveryRouteToInsert.add(insertIndex, deliveryPointToMove);
                 hasInserted = true;
             }
             currentIndex++;
         }
 
-        if(deliveryPointListToModify.isEmpty()){
+        if (deliveryPointListToModify.isEmpty()) {
             deliveryRoutes.remove(deliveryRouteToModifyIndex);
         }
 
-        if(!hasInserted){
+        if (!hasInserted) {
             final DeliveryRoute newDeliveryRoute = new DeliveryRoute(getWarehouse());
             newDeliveryRoute.add(deliveryPointToMove);
             deliveryRoutes.add(newDeliveryRoute);

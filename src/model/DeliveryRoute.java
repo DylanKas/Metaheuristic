@@ -14,6 +14,10 @@ public class DeliveryRoute implements Cloneable{
     }
 
     public void add(final DeliveryPoint deliveryPoint) {
+        add(deliveryPointList.size(), deliveryPoint);
+    }
+
+    public void add(final Integer index, final DeliveryPoint deliveryPoint) {
         if(deliveryPointList.size() == 0){
             length += calculateDistance(warehouse, deliveryPoint);
         } else {
@@ -22,7 +26,7 @@ public class DeliveryRoute implements Cloneable{
 
         totalQuantity += deliveryPoint.getQuantity();
 
-        deliveryPointList.add(deliveryPoint);
+        deliveryPointList.add(index, deliveryPoint);
     }
 
     public DeliveryPoint remove(final int index){

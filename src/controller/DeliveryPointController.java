@@ -71,6 +71,14 @@ public class DeliveryPointController {
         return null;
     }
 
+    public List<DeliveryRoute> getDeliveryRoutes() {
+        return deliveryRoutes;
+    }
+
+    public void setDeliveryRoutes(List<DeliveryRoute> deliveryRoutes) {
+        this.deliveryRoutes = deliveryRoutes;
+    }
+
     public List<DeliveryRoute> generateOrderedSolution() {
         deliveryRoutes = new ArrayList<>();
         final DeliveryPoint warehouse = deliveryPointList.get(0);
@@ -109,27 +117,62 @@ public class DeliveryPointController {
         }
         return deliveryRoutes;
     }
+    public double getInitialTemperature(){
+        return -getTotalLength()/Math.log(0.8);
+    }
 
-    public void simulatedAnnealing(final double initialTemperature, final int maximumIteration) {
+    public void simulatedAnnealing(final int maximumIteration) {
+        List<DeliveryRoute> currentSolution;
+        double latestTotalLength = getTotalLength();
+        double temperature = getInitialTemperature();
+        double variation = 0.90;
+
+
+        for(int i = 0; i < maximumIteration; i++){
+            currentSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+            if (RANDOM.nextBoolean()) {
+                generateRandomNeighborSolution2();
+            } else {
+                generateRandomNeighborSolution();
+            }
+            final double currentTotalLength = getTotalLength();
+            if(currentTotalLength < latestTotalLength || (RANDOM.nextDouble() < Math.exp((latestTotalLength - currentTotalLength) / temperature))){
+                latestTotalLength = currentTotalLength;
+            }
+            else {
+                deliveryRoutes = currentSolution;
+            }
+            temperature = variation * temperature;
+            //variation += variation / 2;
+        }
+    }
+    /*
+        public void simulatedAnnealing(final double initialTemperature, final int maximumIteration) {
         List<DeliveryRoute> latestSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+        List<DeliveryRoute> currentSolution;
         double latestTotalLength = getTotalLength();
         double temperature = initialTemperature;
         double variation = 0.5;
 
         for(int i = 0; i < maximumIteration; i++){
+            currentSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
             generateRandomNeighborSolution2();
             final double currentTotalLength = getTotalLength();
             if(currentTotalLength < latestTotalLength || RANDOM.nextDouble() < Math.exp((latestTotalLength - currentTotalLength) / temperature)){
-                latestSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+                deliveryRoutes = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
                 latestTotalLength = currentTotalLength;
+                //deliveryRoutes = latestSolution;
             }
             else {
-                deliveryRoutes = latestSolution;
+                deliveryRoutes = currentSolution;
             }
             temperature = variation * temperature;
             variation += variation / 2;
         }
     }
+     */
+
+
 
     public List<DeliveryRoute> generateRandomNeighborSolution() {
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());

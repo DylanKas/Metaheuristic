@@ -105,7 +105,8 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    drawRoutes(deliveryPointController.generateRandomNeighborSolution2());
+                    deliveryPointController.simulatedAnnealing(200000);
+                    drawRoutes(deliveryPointController.getDeliveryRoutes());
                 }
             }
         };

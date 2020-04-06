@@ -110,9 +110,25 @@ public class DeliveryPointController {
         return deliveryRoutes;
     }
 
-    public void simulatedAnnealing(final double initialTemperature) {
-        List<DeliveryRoute> optimalSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+    public void simulatedAnnealing(final double initialTemperature, final int maximumIteration) {
+        List<DeliveryRoute> latestSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+        double latestTotalLength = getTotalLength();
+        double temperature = initialTemperature;
+        double variation = 0.5;
 
+        for(int i = 0; i < maximumIteration; i++){
+            generateRandomNeighborSolution2();
+            final double currentTotalLength = getTotalLength();
+            if(currentTotalLength < latestTotalLength || RANDOM.nextDouble() < Math.exp((latestTotalLength - currentTotalLength) / temperature)){
+                latestSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+                latestTotalLength = currentTotalLength;
+            }
+            else {
+                deliveryRoutes = latestSolution;
+            }
+            temperature = variation * temperature;
+            variation += variation / 2;
+        }
     }
 
     public List<DeliveryRoute> generateRandomNeighborSolution() {

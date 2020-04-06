@@ -19,9 +19,26 @@ public class DeliveryRoute implements Cloneable{
 
     public void add(final Integer index, final DeliveryPoint deliveryPoint) {
         if(deliveryPointList.size() == 0){
-            length += calculateDistance(warehouse, deliveryPoint);
-        } else {
-            length += calculateDistance(deliveryPointList.get(deliveryPointList.size() - 1), deliveryPoint);
+            length += 2 * calculateDistance(warehouse, deliveryPoint);
+        } else  {
+            final DeliveryPoint previousPoint, nextPoint;
+            if((index != 0)) {
+                previousPoint = deliveryPointList.get(index - 1);
+            }
+            else {
+                previousPoint = warehouse;
+            }
+
+            if(index != deliveryPointList.size()){
+                nextPoint = deliveryPointList.get(index);
+            } else {
+                nextPoint = warehouse;
+            }
+
+            length += calculateDistance(previousPoint, deliveryPoint);
+            length += calculateDistance(deliveryPoint, nextPoint);
+
+            length -= calculateDistance(previousPoint, nextPoint);
         }
 
         totalQuantity += deliveryPoint.getQuantity();
@@ -33,7 +50,7 @@ public class DeliveryRoute implements Cloneable{
         final DeliveryPoint deliveryPoint = deliveryPointList.get(index);
 
         if(deliveryPointList.size() - 1 == 0){
-            length = 0;
+            length = 0d;
         } else {
             final DeliveryPoint previousPoint, nextPoint;
             if((index != 0)) {
@@ -83,7 +100,7 @@ public class DeliveryRoute implements Cloneable{
     }
 
     private double calculateDistance(final DeliveryPoint startPoint, final DeliveryPoint endPoint) {
-        return Math.sqrt((endPoint.getX() - startPoint.getX())^2 + (endPoint.getY() - startPoint.getY())^2);
+        return Math.sqrt(Math.pow(endPoint.getX() - startPoint.getX(), 2) + Math.pow(endPoint.getY() - startPoint.getY(), 2));
     }
 
     @Override

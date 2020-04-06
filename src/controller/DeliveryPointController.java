@@ -107,8 +107,11 @@ public class DeliveryPointController {
                 deliveryRoutes.add(deliveryRoute);
             }
         }
-
         return deliveryRoutes;
+    }
+
+    public void simulatedAnnealing(final double initialTemperature) {
+        List<DeliveryRoute> optimalSolution = deliveryRoutes;
     }
 
     public List<DeliveryRoute> generateRandomNeighborSolution() {
@@ -165,5 +168,10 @@ public class DeliveryPointController {
         }
 
         return deliveryRoutes;
+    }
+
+    public double getTotalLength() {
+        deliveryRoutes.stream().mapToDouble(DeliveryRoute::getLength).forEach(d -> System.out.println(d));
+        return deliveryRoutes.stream().mapToDouble(DeliveryRoute::getLength).sum();
     }
 }

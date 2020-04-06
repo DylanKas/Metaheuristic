@@ -25,6 +25,7 @@ import model.DeliveryRoute;
 
 import java.io.File;
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -252,7 +253,7 @@ public class Map {
             }
         }
 
-        length.setText("Fitness: "+ Double.toString(deliveryPointController.getTotalLength()));
+        length.setText("Fitness: "+ new DecimalFormat("#.##").format((deliveryPointController.getTotalLength())));
     }
 
     public void drawHouse(DeliveryPoint deliveryPoint){

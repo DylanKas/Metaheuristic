@@ -171,7 +171,6 @@ public class DeliveryPointController {
     }
 
     public double getTotalLength() {
-        deliveryRoutes.stream().mapToDouble(DeliveryRoute::getLength).forEach(d -> System.out.println(d));
         return deliveryRoutes.stream().mapToDouble(DeliveryRoute::getLength).sum();
     }
 }

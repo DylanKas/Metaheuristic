@@ -26,19 +26,20 @@
       <Line endX="131.0" layoutX="1069.0" layoutY="424.0" startX="-100.0" />
       <StackPane fx:id="stackpane" prefHeight="800.0" prefWidth="965.0">
          <children>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="965.0">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="965.0">
                <children>
-                  <Pane fx:id="lines" layoutY="-9.0" prefHeight="809.0" prefWidth="965.0" />
+                  <Pane fx:id="houses" layoutY="-9.0" prefHeight="809.0" prefWidth="965.0" />
                </children>
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="965.0">
                <children>
-                  <Pane fx:id="houses" layoutY="-9.0" prefHeight="809.0" prefWidth="965.0" />
+                  <Pane fx:id="lines" layoutY="-9.0" prefHeight="809.0" prefWidth="965.0" />
                </children>
             </AnchorPane>
          </children>
       </StackPane>
       <Button fx:id="buttonNeighbor2" layoutX="989.0" layoutY="338.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Iteration Neighbor 2" />
       <Button fx:id="buttonNeighbor1" layoutX="989.0" layoutY="305.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Iteration Neighbor 1" />
+      <Label id="length" layoutX="989.0" layoutY="280.0" text="Fitness: " />
    </children>
 </Pane>

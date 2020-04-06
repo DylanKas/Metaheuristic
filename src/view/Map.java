@@ -9,10 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BackgroundFill;
@@ -59,6 +56,7 @@ public class Map {
     private Pane mapHouses;
     private ChoiceBox dataChoice;
     private TextArea logs;
+    private Label length;
 
     private DeliveryPointController deliveryPointController;
 
@@ -133,16 +131,15 @@ public class Map {
                     runAndWait(Map.this::resetMap);
                 } finally {
                     deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(new_value.intValue()));
-                    drawHouses(deliveryPointController.getDeliveryPointList());
-                    System.out.println("DRAW ROUTES");
                     drawRoutes(deliveryPointController.generateOrderedSolution());
+                    drawHouses(deliveryPointController.getDeliveryPointList());
                 }
 
             }
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
-        drawHouses(deliveryPointController.getDeliveryPointList());
         drawRoutes(deliveryPointController.generateGreedySolution());
+        drawHouses(deliveryPointController.getDeliveryPointList());
 
     }
 
@@ -159,7 +156,6 @@ public class Map {
     }
 
     private void drawHouses(List<DeliveryPoint> lists){
-        mapHouses.setStyle("-fx-background-color: #" + "76AE66");
         for (DeliveryPoint deliveryPoint : lists) {
             drawHouse(deliveryPoint);
         }
@@ -174,14 +170,16 @@ public class Map {
         mapLines = (Pane) stage.getScene().lookup("#lines");
         mapHouses = (Pane) stage.getScene().lookup("#houses");
         stackpane = (StackPane) stage.getScene().lookup("#stackpane");
-        stackpane.getChildren().addAll(mapHouses,mapLines);
+        stackpane.getChildren().addAll(mapLines,mapHouses);
         dataChoice = (ChoiceBox) stage.getScene().lookup("#dataChoice");
         logs = (TextArea) stage.getScene().lookup("#logs");
+        length = (Label) stage.getScene().lookup("#length");
         //Add text area for logs to logsPane
         logs.setEditable(false);
     }
 
     public void drawRoutes(List<DeliveryRoute> lists){
+        mapLines.setStyle("-fx-background-color: #" + "76AE66");
         if(lists.size()==0){
             System.out.println("Empty DeliveryRoutes");
             return;
@@ -253,6 +251,8 @@ public class Map {
                 iteration++;
             }
         }
+
+        length.setText("Fitness: "+ Double.toString(deliveryPointController.getTotalLength()));
     }
 
     public void drawHouse(DeliveryPoint deliveryPoint){
@@ -286,8 +286,8 @@ public class Map {
 
     public void resetMap(){
         logAction("- Map has been reset");
-        resetHouses();
         resetLines();
+        resetHouses();
     }
 
 

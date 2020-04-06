@@ -111,7 +111,8 @@ public class DeliveryPointController {
     }
 
     public void simulatedAnnealing(final double initialTemperature) {
-        List<DeliveryRoute> optimalSolution = deliveryRoutes;
+        List<DeliveryRoute> optimalSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+
     }
 
     public List<DeliveryRoute> generateRandomNeighborSolution() {
@@ -121,10 +122,10 @@ public class DeliveryPointController {
         //TODO remove when we hae real operators
         if (deliveryPointListToModify.size() > 1) {
             final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryPointListToModify.size());
-            final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
+            final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(deliveryPointToMoveIndex);
             int insertIndex;
             while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size() + 1)) == deliveryPointToMoveIndex);
-            deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
+            deliveryRouteToModify.add(insertIndex, deliveryPointToMove);
         }
 
         return deliveryRoutes;

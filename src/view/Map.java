@@ -253,7 +253,7 @@ public class Map {
             }
         }
 
-        length.setText("Fitness: "+ new DecimalFormat("#.##").format((deliveryPointController.getTotalLength())));
+        length.setText("Fitness: "+ new DecimalFormat("#.##").format((deliveryPointController.getTotalLength()))+"   -   Vehicles: "+lists.size());
     }
 
     public void drawHouse(DeliveryPoint deliveryPoint){

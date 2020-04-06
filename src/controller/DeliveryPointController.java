@@ -117,12 +117,10 @@ public class DeliveryPointController {
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
         //TODO remove when we hae real operators
         if (deliveryPointListToModify.size() > 1) {
-            final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryRouteToModify.getDeliveryPointList().size());
+            final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryPointListToModify.size());
             final DeliveryPoint deliveryPointToMove = deliveryPointListToModify.remove(deliveryPointToMoveIndex);
             int insertIndex;
-            while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size())) == deliveryPointToMoveIndex) {
-                System.out.println(insertIndex);
-            }
+            while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size() + 1)) == deliveryPointToMoveIndex);
             deliveryPointListToModify.add(insertIndex, deliveryPointToMove);
         }
 
@@ -149,7 +147,7 @@ public class DeliveryPointController {
             final DeliveryRoute deliveryRouteToInsert = deliveryRoutes.get(routeToInsertIndex);
             if (deliveryRouteToInsert.getTotalQuantity() + deliveryPointToMove.getQuantity() <= MAX_QUANTITY) {
                 final List<DeliveryPoint> deliveryPointListToInsert = deliveryRouteToInsert.getDeliveryPointList();
-                int insertIndex = RANDOM.nextInt(deliveryPointListToInsert.size());
+                final int insertIndex = RANDOM.nextInt(deliveryPointListToInsert.size() + 1);
                 deliveryRouteToInsert.add(insertIndex, deliveryPointToMove);
                 hasInserted = true;
             }

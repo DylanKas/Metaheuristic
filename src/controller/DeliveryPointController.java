@@ -9,10 +9,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -117,6 +115,7 @@ public class DeliveryPointController {
         }
         return deliveryRoutes;
     }
+
     public double getInitialTemperature(){
         return -getTotalLength()/Math.log(0.8);
     }
@@ -129,7 +128,7 @@ public class DeliveryPointController {
 
 
         for(int i = 0; i < maximumIteration; i++){
-            currentSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+            currentSolution = cloneCurrentSolution();
             if (RANDOM.nextBoolean()) {
                 generateRandomNeighborSolution2();
             } else {
@@ -143,42 +142,36 @@ public class DeliveryPointController {
                 deliveryRoutes = currentSolution;
             }
             temperature = variation * temperature;
-            //variation += variation / 2;
         }
     }
-    /*
-        public void simulatedAnnealing(final double initialTemperature, final int maximumIteration) {
-        List<DeliveryRoute> latestSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
-        List<DeliveryRoute> currentSolution;
-        double latestTotalLength = getTotalLength();
-        double temperature = initialTemperature;
-        double variation = 0.5;
 
-        for(int i = 0; i < maximumIteration; i++){
-            currentSolution = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
-            generateRandomNeighborSolution2();
-            final double currentTotalLength = getTotalLength();
-            if(currentTotalLength < latestTotalLength || RANDOM.nextDouble() < Math.exp((latestTotalLength - currentTotalLength) / temperature)){
-                deliveryRoutes = deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
-                latestTotalLength = currentTotalLength;
-                //deliveryRoutes = latestSolution;
+    public List<List<DeliveryRoute>> generateNeighbors(){
+        final List<DeliveryRoute> storedRoutes = cloneCurrentSolution();
+        final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
+
+        for(DeliveryRoute deliveryRoute : deliveryRoutes) {
+            for(DeliveryPoint deliveryPoint : deliveryRoute.getDeliveryPointList()) {
+                neighbors.addAll(generateAllNeighbors(deliveryPoint));
+                deliveryRoutes = storedRoutes;
             }
-            else {
-                deliveryRoutes = currentSolution;
-            }
-            temperature = variation * temperature;
-            variation += variation / 2;
         }
+
+        return neighbors;
     }
-     */
 
+    public List<List<DeliveryRoute>> generateAllNeighbors(final DeliveryPoint deliveryPoint) {
+        final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
 
+        neighbors.addAll(generateAllNeighborSolutions(deliveryPoint));
+
+        return neighbors;
+    }
 
     public List<DeliveryRoute> generateRandomNeighborSolution() {
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
-        //TODO remove when we hae real operators
+        //TODO remove when we have real operators
         if (deliveryPointListToModify.size() > 1) {
             final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryPointListToModify.size());
             final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(deliveryPointToMoveIndex);
@@ -188,6 +181,41 @@ public class DeliveryPointController {
         }
 
         return deliveryRoutes;
+    }
+
+    public List<List<DeliveryRoute>> generateAllNeighborSolutions(final DeliveryPoint deliveryPoint) {
+        final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
+        final List<DeliveryRoute> storedSolution = cloneCurrentSolution();
+        final DeliveryRoute deliveryRouteToModify = deliveryRoutes.stream()
+                .filter(route -> route.getDeliveryPointList().contains(deliveryPoint))
+                .findFirst()
+                .get();
+
+        final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
+
+        if (deliveryPointListToModify.size() > 1) {
+            deliveryPointListToModify.stream()
+                    .filter(point -> point.getX() == deliveryPoint.getX() && point.getY() == deliveryPoint.getY())
+                    .map(point -> {
+                        final List<List<DeliveryRoute>> localNeighbors = new ArrayList<>();
+                        final int pointIndex = deliveryPointListToModify.indexOf(point);
+                        final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(pointIndex);
+
+                        for(int i = 0; i <= deliveryPointListToModify.size(); i++) {
+                            if(i != pointIndex) {
+                                deliveryRouteToModify.add(i, deliveryPointToMove);
+                                localNeighbors.add(cloneCurrentSolution());
+                                deliveryRoutes = storedSolution;
+                            }
+                        }
+
+                        return localNeighbors;
+                    })
+                    .collect(Collectors.toList())
+                    .forEach(list -> neighbors.addAll(list));
+        }
+
+        return neighbors;
     }
 
     public List<DeliveryRoute> generateRandomNeighborSolution2() {
@@ -232,5 +260,9 @@ public class DeliveryPointController {
 
     public double getTotalLength() {
         return deliveryRoutes.stream().mapToDouble(DeliveryRoute::getLength).sum();
+    }
+
+    private List<DeliveryRoute> cloneCurrentSolution(){
+        return deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
     }
 }

@@ -149,20 +149,25 @@ public class DeliveryPointController {
         final List<DeliveryRoute> storedRoutes = cloneCurrentSolution();
         final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
 
+        int indexRoute = 0;
         for(DeliveryRoute deliveryRoute : deliveryRoutes) {
+            int indexPoint = 0;
             for(DeliveryPoint deliveryPoint : deliveryRoute.getDeliveryPointList()) {
-                neighbors.addAll(generateAllNeighbors(deliveryPoint));
+                neighbors.addAll(generateAllNeighbors(deliveryPoint, indexRoute, indexPoint));
                 deliveryRoutes = storedRoutes;
+                indexPoint++;
             }
+            indexRoute++;
         }
 
         return neighbors;
     }
 
-    public List<List<DeliveryRoute>> generateAllNeighbors(final DeliveryPoint deliveryPoint) {
+    public List<List<DeliveryRoute>> generateAllNeighbors(final DeliveryPoint deliveryPoint, int indexRoute,int indexPoint) {
         final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
 
         neighbors.addAll(generateAllNeighborSolutions(deliveryPoint));
+        neighbors.addAll(generateAllNeighborSolutions2(indexRoute,indexPoint));
 
         return neighbors;
     }
@@ -214,6 +219,54 @@ public class DeliveryPointController {
                     .collect(Collectors.toList())
                     .forEach(list -> neighbors.addAll(list));
         }
+
+        return neighbors;
+    }
+
+    public List<List<DeliveryRoute>> generateAllNeighborSolutions2(int indexRoute, int indexPoint) {
+        final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
+
+        List<DeliveryRoute> defaultSolution = cloneCurrentSolution();
+
+        final int deliveryRouteToModifyIndex = indexRoute;
+        final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
+        final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
+        final int deliveryPointToMoveIndex = indexPoint;
+        final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(deliveryPointToMoveIndex);
+        final List<Integer> indexToVisitList = IntStream.rangeClosed(0, deliveryRoutes.size() - 1)
+                .boxed().collect(Collectors.toList());
+        indexToVisitList.remove(deliveryRouteToModifyIndex);
+
+        boolean hasInserted = false;
+        int currentIndex = 0;
+
+        List<DeliveryRoute> currentSolution = cloneCurrentSolution();
+
+        while (currentIndex < indexToVisitList.size()) {
+            final int routeToInsertIndex = indexToVisitList.get(currentIndex);
+            final DeliveryRoute deliveryRouteToInsert = deliveryRoutes.get(routeToInsertIndex);
+            if (deliveryRouteToInsert.getTotalQuantity() + deliveryPointToMove.getQuantity() <= MAX_QUANTITY) {
+                final List<DeliveryPoint> deliveryPointListToInsert = deliveryRouteToInsert.getDeliveryPointList();
+                for(int i=0; i<= deliveryPointListToInsert.size(); i++){
+                    deliveryRoutes = cloneCurrentSolution();
+                    deliveryRouteToInsert.add(i, deliveryPointToMove);
+                    neighbors.add(deliveryRoutes);
+                    deliveryRoutes = currentSolution;
+                }
+
+            }
+            currentIndex++;
+        }
+
+        if (deliveryPointListToModify.isEmpty()) {
+            deliveryRoutes.remove(deliveryRouteToModifyIndex);
+        }
+
+        final DeliveryRoute newDeliveryRoute = new DeliveryRoute(getWarehouse());
+        newDeliveryRoute.add(deliveryPointToMove);
+        deliveryRoutes.add(newDeliveryRoute);
+        neighbors.add(deliveryRoutes);
+        deliveryRoutes = defaultSolution;
 
         return neighbors;
     }

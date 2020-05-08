@@ -104,6 +104,11 @@ public class DeliveryRoute implements Cloneable{
     }
 
     @Override
+    public boolean equals(Object a){
+        return deliveryPointList.equals(((DeliveryRoute) a).getDeliveryPointList());
+    }
+
+    @Override
     public DeliveryRoute clone() {
         final DeliveryRoute clone = new DeliveryRoute(warehouse);
         deliveryPointList.stream().forEach(clone::add);

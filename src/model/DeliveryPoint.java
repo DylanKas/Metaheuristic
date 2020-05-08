@@ -37,4 +37,10 @@ public class DeliveryPoint {
     public void setI(int i) {
         this.i = i;
     }
+
+    @Override
+    public boolean equals(Object a){
+        DeliveryPoint dp = (DeliveryPoint) a;
+        return dp.getX()==x && dp.getY()==y && dp.getQuantity()==quantity;
+    }
 }

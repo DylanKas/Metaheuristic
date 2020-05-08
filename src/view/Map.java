@@ -91,8 +91,10 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    drawRoutes(deliveryPointController.generateRandomNeighborSolution());
+                    deliveryPointController.simulatedAnnealing(200000);
+                    drawRoutes(deliveryPointController.getDeliveryRoutes());
                 }
+
             }
         };
         Button buttonNeighbor1 = (Button) stage.getScene().lookup("#buttonNeighbor1");
@@ -105,8 +107,7 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    deliveryPointController.simulatedAnnealing(200000);
-                    drawRoutes(deliveryPointController.getDeliveryRoutes());
+                    drawRoutes(deliveryPointController.tabuSearch(100,2));
                 }
             }
         };

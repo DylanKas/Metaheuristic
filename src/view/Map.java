@@ -118,7 +118,7 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    //drawRoutes(deliveryPointController.tabuSearch((int) listSizeTabu.getValue(),(int) maxIterationTabu.getValue()));
+                    drawRoutes(deliveryPointController.tabuSearch((int) listSizeTabu.getValue(),(int) maxIterationTabu.getValue()));
                 }
             }
         };

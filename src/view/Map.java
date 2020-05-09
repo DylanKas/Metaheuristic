@@ -149,7 +149,7 @@ public class Map {
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
         deliveryPointController.setGraphName(list.get(0));
-        drawRoutes(deliveryPointController.generateGreedySolution());
+        drawRoutes(deliveryPointController.generateOrderedSolution());
         drawHouses(deliveryPointController.getDeliveryPointList());
 
         drawCsv();
@@ -181,6 +181,8 @@ public class Map {
             sb.append("xi fitness");
             sb.append(';');
             sb.append("xi Nb camions");
+            sb.append(';');
+            sb.append("Temps calcul (en ms)");
             sb.append('\n');
             writer.write(sb.toString());
 
@@ -201,6 +203,7 @@ public class Map {
             int maxIteration = 10000;
             double variation = 0.9;
 
+            long startTime, endTime, elapsedTime;
 
             for(int i=0;i<nRow;i++){
                 final File folder = new File("./resources/data");
@@ -208,6 +211,10 @@ public class Map {
                 String graphName;
                 for(int j=0;j<choices.size();j++){
                     graphName = choices.get(j);
+                    startTime = System.nanoTime();
+
+
+
                     deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+graphName);
                     deliveryPointController.setGraphName(graphName);
 
@@ -218,6 +225,8 @@ public class Map {
                         graphInitialType = "filltruck";
                         deliveryPointController.generateOrderedSolution();
                     }
+                    endTime = System.nanoTime();
+                    elapsedTime = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 
                     sb = new StringBuilder();
                     sb.append(i);
@@ -232,6 +241,9 @@ public class Map {
                     sb.append(';');
                     sb.append(deliveryPointController.getDeliveryRoutes().size());
                     sb.append(';');
+                    sb.append(elapsedTime/1000000);
+                    sb.append(';');
+
 
                     if(isRecuit){
                         deliveryPointController.simulatedAnnealing(maxIteration, variation);

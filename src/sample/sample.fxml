@@ -4,6 +4,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -19,7 +20,7 @@
             <TextArea id="logs" prefHeight="340.0" prefWidth="230.0" wrapText="true" />
          </content></ScrollPane>
       <Line endX="58.0" endY="-181.0" layoutX="909.0" layoutY="181.0" startX="58.0" startY="618.0" />
-      <Button fx:id="buttonReset" layoutX="988.0" layoutY="375.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Reset" />
+      <Button fx:id="buttonReset" layoutX="968.0" layoutY="400.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="232.0" text="Reset" />
       <ChoiceBox id="dataChoice" layoutX="988.0" layoutY="41.0" prefHeight="25.0" prefWidth="192.0" />
       <Label layoutX="988.0" layoutY="9.0" prefHeight="25.0" prefWidth="192.0" text="Select data file" />
       <Label layoutX="988.0" layoutY="86.0" prefHeight="25.0" prefWidth="192.0" text="Configure metaheuristic" />
@@ -35,19 +36,24 @@
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="965.0">
                <children>
-                  <Pane fx:id="houses" layoutY="-9.0" prefHeight="809.0" prefWidth="965.0" />
+                  <Pane id="houses" fx:id="houses" layoutY="-9.0" prefHeight="809.0" prefWidth="965.0" />
                </children>
             </AnchorPane>
          </children>
       </StackPane>
-      <Label id="length" layoutX="989.0" layoutY="280.0" text="Fitness: " />
-      <TabPane layoutX="984.0" layoutY="111.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutX="992.0" layoutY="111.0" prefHeight="256.0" prefWidth="192.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Recuit">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="230.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="buttonNeighbor1" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Iteration Neighbor 1" />
+                        <Button fx:id="buttonNeighbor1" layoutY="201.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Start" />
+                        <Slider id="speed_recuit" layoutX="9.0" layoutY="23.0" majorTickUnit="1000.0" max="1000.0" min="1.0" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="1000.0" />
+                        <Label layoutX="14.0" layoutY="6.0" prefHeight="13.0" prefWidth="151.0" text="Speed" />
+                        <Label layoutX="14.0" layoutY="57.0" prefHeight="13.0" prefWidth="151.0" text="Variation" />
+                        <Slider id="Variation" blockIncrement="0.01" layoutX="9.0" layoutY="76.0" majorTickUnit="1.0" max="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="0.9" />
+                        <Label layoutX="14.0" layoutY="111.0" prefHeight="13.0" prefWidth="151.0" text="Maximum iteration" />
+                        <Slider id="maximum_iteration_recuit" layoutX="9.0" layoutY="129.0" majorTickUnit="500000.0" max="500000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="200000.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -56,12 +62,19 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="buttonNeighbor2" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Iteration Neighbor 2" />
+                        <Button fx:id="buttonNeighbor2" layoutY="201.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Start" />
+                        <Slider id="speed_tabou" layoutX="9.0" layoutY="23.0" majorTickUnit="1000.0" max="1000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="1000.0" />
+                        <Label layoutX="14.0" layoutY="6.0" prefHeight="13.0" prefWidth="151.0" text="Speed" />
+                        <Label layoutX="14.0" layoutY="57.0" prefHeight="13.0" prefWidth="151.0" text="Tabou list size" />
+                        <Slider id="list_size_tabou" layoutX="9.0" layoutY="77.0" majorTickUnit="1000.0" max="1000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="50.0" />
+                        <Label layoutX="14.0" layoutY="111.0" prefHeight="13.0" prefWidth="151.0" text="Maximum iteration" />
+                        <Slider id="maximum_iteration_tabou" layoutX="9.0" layoutY="128.0" majorTickUnit="500000.0" max="500000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="10000.0" />
                      </children>
                   </AnchorPane>
             </content>
           </Tab>
         </tabs>
       </TabPane>
+      <Label id="length" layoutX="989.0" layoutY="375.0" prefHeight="25.0" prefWidth="206.0" text="Fitness: " />
    </children>
 </Pane>

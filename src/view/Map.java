@@ -59,6 +59,15 @@ public class Map {
     private TextArea logs;
     private Label length;
 
+    private Slider listSizeTabu;
+    private Slider maxIterationTabu;
+    private Slider speedTabu;
+
+    private Slider variationSimulateadAnnealing;
+    private Slider maxIterationSimulatedAnnealing;
+    private Slider speedSimulatedAnnealing;
+
+
     private DeliveryPointController deliveryPointController;
 
     public Map(Stage stage) {
@@ -91,7 +100,7 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    deliveryPointController.simulatedAnnealing(200000);
+                    deliveryPointController.simulatedAnnealing((int) maxIterationSimulatedAnnealing.getValue());
                     drawRoutes(deliveryPointController.getDeliveryRoutes());
                 }
 
@@ -107,7 +116,7 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    drawRoutes(deliveryPointController.tabuSearch(100,2));
+                    //drawRoutes(deliveryPointController.tabuSearch((int) listSizeTabu.getValue(),(int) maxIterationTabu.getValue()));
                 }
             }
         };
@@ -177,6 +186,13 @@ public class Map {
         dataChoice = (ChoiceBox) stage.getScene().lookup("#dataChoice");
         logs = (TextArea) stage.getScene().lookup("#logs");
         length = (Label) stage.getScene().lookup("#length");
+        listSizeTabu = (Slider) stage.getScene().lookup("#list_size_tabou");
+        speedTabu = (Slider) stage.getScene().lookup("#speed_tabou");
+        maxIterationTabu = (Slider) stage.getScene().lookup("#maximum_iteration_tabou");
+        variationSimulateadAnnealing = (Slider) stage.getScene().lookup("#Variation");
+        speedSimulatedAnnealing = (Slider) stage.getScene().lookup("#speed_recuit");
+        maxIterationSimulatedAnnealing = (Slider) stage.getScene().lookup("#maximum_iteration_recuit");
+
         //Add text area for logs to logsPane
         logs.setEditable(false);
     }

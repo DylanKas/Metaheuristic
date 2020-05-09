@@ -22,7 +22,7 @@ public class DeliveryRoute implements Cloneable{
             length += 2 * calculateDistance(warehouse, deliveryPoint);
         } else  {
             final DeliveryPoint previousPoint, nextPoint;
-            if((index != 0)) {
+            if(index != 0) {
                 previousPoint = deliveryPointList.get(index - 1);
             }
             else {

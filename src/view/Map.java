@@ -59,6 +59,8 @@ public class Map {
     private TextArea logs;
     private Label length;
 
+    private ListView itineraryList;
+
     private Slider listSizeTabu;
     private Slider maxIterationTabu;
     private Slider speedTabu;
@@ -184,6 +186,7 @@ public class Map {
         stackpane = (StackPane) stage.getScene().lookup("#stackpane");
         stackpane.getChildren().addAll(mapLines,mapHouses);
         dataChoice = (ChoiceBox) stage.getScene().lookup("#dataChoice");
+        itineraryList = (ListView) stage.getScene().lookup("#itinerary_list");
         logs = (TextArea) stage.getScene().lookup("#logs");
         length = (Label) stage.getScene().lookup("#length");
         listSizeTabu = (Slider) stage.getScene().lookup("#list_size_tabou");
@@ -272,6 +275,15 @@ public class Map {
         }
 
         length.setText("Fitness: "+ new DecimalFormat("#.##").format((deliveryPointController.getTotalLength()))+"   -   Vehicles: "+lists.size());
+
+        ListView<String> list = new ListView<String>();
+        ObservableList<String> items =FXCollections.observableArrayList();
+        //items.add("N vehicules:"+lists.get(i).getDeliveryPointList().size());
+        for(int i=0;i<lists.size();i++){
+            items.add(i+"| N: "+lists.get(i).getDeliveryPointList().size()+" | L: "+(int) Math.floor(lists.get(i).getLength() * 100)/100+" | Q: "+lists.get(i).getTotalQuantity());
+        }
+
+        itineraryList.setItems(items);
     }
 
     public void drawHouse(DeliveryPoint deliveryPoint){

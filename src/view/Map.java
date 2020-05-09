@@ -24,12 +24,12 @@ import model.DeliveryPoint;
 import model.DeliveryRoute;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 
@@ -85,11 +85,6 @@ public class Map {
             @Override
             public void handle(ActionEvent event) {
                 resetMap();
-                //try {
-                //    runAndWait(Map.this::resetLines);
-                //} finally {
-                //    drawRoutes(deliveryPointController.generateRandomNeighborSolution());
-                //}
             }
         };
         Button buttonReset = (Button) stage.getScene().lookup("#buttonReset");
@@ -102,7 +97,7 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    deliveryPointController.simulatedAnnealing((int) maxIterationSimulatedAnnealing.getValue());
+                    deliveryPointController.simulatedAnnealing((int) maxIterationSimulatedAnnealing.getValue(), (double) variationSimulateadAnnealing.getValue());
                     drawRoutes(deliveryPointController.getDeliveryRoutes());
                 }
 
@@ -145,6 +140,7 @@ public class Map {
                     runAndWait(Map.this::resetMap);
                 } finally {
                     deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(new_value.intValue()));
+                    deliveryPointController.setGraphName(list.get(new_value.intValue()));
                     drawRoutes(deliveryPointController.generateOrderedSolution());
                     drawHouses(deliveryPointController.getDeliveryPointList());
                 }
@@ -152,9 +148,113 @@ public class Map {
             }
         });
         deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+list.get(0));
+        deliveryPointController.setGraphName(list.get(0));
         drawRoutes(deliveryPointController.generateGreedySolution());
         drawHouses(deliveryPointController.getDeliveryPointList());
 
+        drawCsv();
+    }
+
+    public void drawCsv(){
+        //Date object
+        Date date= new Date();
+        //getTime() returns current time in milliseconds
+        long time = date.getTime();
+
+
+        // File input path
+        try (PrintWriter writer = new PrintWriter(new File("DATA_"+time+".csv"))) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("i");
+            sb.append(';');
+            sb.append("GraphName");
+            sb.append(';');
+            sb.append("N Colis");
+            sb.append(';');
+            sb.append("Graph Initial");
+            sb.append(';');
+            sb.append("x0 fitness");
+            sb.append(';');
+            sb.append("x0 Nb camions");
+            sb.append(';');
+            sb.append("xi fitness");
+            sb.append(';');
+            sb.append("xi Nb camions");
+            sb.append('\n');
+            writer.write(sb.toString());
+
+
+            /**********************************************************************/
+            /**************  Faire ici les algos pour le csv  *********************/
+            /******************************************************************** */
+            String graphInitialType;
+
+            //Pour executer en greedy isGreedy = true, sinon Filltruck = false
+            boolean isGreedy = false;
+            //Pour executer tabou isRecuit = false, sinon recuit = true
+            boolean isRecuit = true;
+
+            //Le nombre de ligne de csv
+            int nRow = 10;
+            int sizeTabu = 25;
+            int maxIteration = 10000;
+            double variation = 0.9;
+
+
+            for(int i=0;i<nRow;i++){
+                final File folder = new File("./resources/data");
+                ArrayList<String> choices = new ArrayList<>(listFilesForFolder(folder));
+                String graphName;
+                for(int j=0;j<choices.size();j++){
+                    graphName = choices.get(j);
+                    deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+graphName);
+                    deliveryPointController.setGraphName(graphName);
+
+                    if(isGreedy){
+                        graphInitialType = "greedy";
+                        deliveryPointController.generateGreedySolution();
+                    }else{
+                        graphInitialType = "filltruck";
+                        deliveryPointController.generateOrderedSolution();
+                    }
+
+                    sb = new StringBuilder();
+                    sb.append(i);
+                    sb.append(';');
+                    sb.append(deliveryPointController.getGraphName());
+                    sb.append(';');
+                    sb.append(deliveryPointController.getDeliveryPointList().size());
+                    sb.append(';');
+                    sb.append(graphInitialType);
+                    sb.append(';');
+                    sb.append(deliveryPointController.getTotalLength());
+                    sb.append(';');
+                    sb.append(deliveryPointController.getDeliveryRoutes().size());
+                    sb.append(';');
+
+                    if(isRecuit){
+                        deliveryPointController.simulatedAnnealing(maxIteration, variation);
+                    }else{
+                        deliveryPointController.tabuSearch(sizeTabu,maxIteration);
+                    }
+
+                    sb.append(deliveryPointController.getTotalLength());
+                    sb.append(';');
+                    sb.append(deliveryPointController.getDeliveryRoutes().size());
+                    sb.append('\n');
+
+                    writer.write(sb.toString());
+                }
+                }
+
+
+
+            System.out.println("done!");
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public ArrayList<String> listFilesForFolder(final File folder) {

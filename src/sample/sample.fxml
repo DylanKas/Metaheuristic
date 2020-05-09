@@ -69,7 +69,7 @@
                         <Label layoutX="14.0" layoutY="57.0" prefHeight="13.0" prefWidth="151.0" text="Tabou list size" />
                         <Slider id="list_size_tabou" layoutX="9.0" layoutY="77.0" majorTickUnit="1000.0" max="1000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="50.0" />
                         <Label layoutX="14.0" layoutY="111.0" prefHeight="13.0" prefWidth="151.0" text="Maximum iteration" />
-                        <Slider id="maximum_iteration_tabou" layoutX="9.0" layoutY="128.0" majorTickUnit="500000.0" max="500000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="10000.0" />
+                        <Slider id="maximum_iteration_tabou" layoutX="9.0" layoutY="128.0" majorTickUnit="100000.0" max="100000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="10000.0" />
                      </children>
                   </AnchorPane>
             </content>

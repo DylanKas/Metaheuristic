@@ -21,6 +21,7 @@ public class DeliveryPointController {
     private static final int MAX_QUANTITY = 100;
     private static final Random RANDOM = new Random();
 
+    private String graphName = "";
     private List<DeliveryPoint> deliveryPointList;
     private List<DeliveryRoute> deliveryRoutes;
 
@@ -30,6 +31,14 @@ public class DeliveryPointController {
 
     public List<DeliveryPoint> getDeliveryPointList() {
         return deliveryPointList;
+    }
+
+    public String getGraphName() {
+        return graphName;
+    }
+
+    public void setGraphName(String graphName) {
+        this.graphName = graphName;
     }
 
     public DeliveryPoint getWarehouse() {
@@ -122,11 +131,11 @@ public class DeliveryPointController {
         return -getTotalLength()/Math.log(0.8);
     }
 
-    public void simulatedAnnealing(final int maximumIteration) {
+    public void simulatedAnnealing(final int maximumIteration, final double variation) {
         List<DeliveryRoute> currentSolution;
         double latestTotalLength = getTotalLength();
         double temperature = getInitialTemperature();
-        double variation = 0.90;
+        //double variation = 0.90;
 
 
         for(int i = 0; i < maximumIteration; i++){

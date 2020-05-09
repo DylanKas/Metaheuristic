@@ -129,7 +129,8 @@ public class Map {
         //Set default data file and initialize the map
         dataChoice.setValue(list.get(0));
         logAction("---- Data selected: " + list.get(0));
-        dataChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
+        dataChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
             // if the item of the list is changed
             public void changed(ObservableValue ov, Number value, Number new_value) {
 
@@ -171,6 +172,8 @@ public class Map {
             sb.append(';');
             sb.append("GraphName");
             sb.append(';');
+            sb.append("Algorithm");
+            sb.append(';');
             sb.append("N Colis");
             sb.append(';');
             sb.append("Graph Initial");
@@ -184,6 +187,10 @@ public class Map {
             sb.append("xi Nb camions");
             sb.append(';');
             sb.append("Temps calcul (en ms)");
+            sb.append(';');
+            sb.append("Max iteration");
+            sb.append(';');
+            sb.append("Variation ou Taille liste");
             sb.append('\n');
             writer.write(sb.toString());
 
@@ -199,7 +206,7 @@ public class Map {
             boolean isRecuit = true;
 
             //Le nombre de ligne de csv
-            int nRow = 2;
+            int nRow = 10;
             int sizeTabu = 100;
             int maxIteration = 10000;
             double variation = 0.9;
@@ -213,8 +220,6 @@ public class Map {
                 for(int j=0;j<choices.size();j++){
                     graphName = choices.get(j);
                     startTime = System.nanoTime();
-
-
 
                     deliveryPointController = DeliveryPointController.initializeFromFile("./resources/data/"+graphName);
                     deliveryPointController.setGraphName(graphName);
@@ -234,6 +239,12 @@ public class Map {
                     sb.append(';');
                     sb.append(deliveryPointController.getGraphName());
                     sb.append(';');
+                    if(isRecuit){
+                        sb.append("recuit");
+                    }else{
+                        sb.append("tabou");
+                    }
+                    sb.append(';');
                     sb.append(deliveryPointController.getDeliveryPointList().size());
                     sb.append(';');
                     sb.append(graphInitialType);
@@ -241,8 +252,6 @@ public class Map {
                     sb.append(deliveryPointController.getTotalLength());
                     sb.append(';');
                     sb.append(deliveryPointController.getDeliveryRoutes().size());
-                    sb.append(';');
-                    sb.append(elapsedTime/1000000);
                     sb.append(';');
 
 
@@ -255,6 +264,17 @@ public class Map {
                     sb.append(deliveryPointController.getTotalLength());
                     sb.append(';');
                     sb.append(deliveryPointController.getDeliveryRoutes().size());
+                    sb.append(';');
+                    sb.append(elapsedTime/1000000);
+                    sb.append(';');
+                    sb.append(maxIteration);
+                    if(isRecuit){
+                        sb.append(';');
+                        sb.append(variation);
+                    }else{
+                        sb.append(';');
+                        sb.append(sizeTabu);
+                    }
                     sb.append('\n');
 
                     writer.write(sb.toString());
@@ -404,7 +424,7 @@ public class Map {
             if(deliveryPoint.getI() == 0){
                 return;
             }
-            Image house = new Image("/house2.png");
+            Image house = new Image("./house2.png");
             ImageView imageView = new ImageView();
             imageView.setImage(house);
             imageView.setX(OFFSET_X+LENGTH_X*deliveryPoint.getX()-HOUSE_IMAGE_HEIGHT/2);
@@ -417,7 +437,7 @@ public class Map {
 
     public void drawWarehouse(DeliveryPoint warehouse){
         Platform.runLater(() -> {
-            Image warehouseImage = new Image("/warehouse2.png");
+            Image warehouseImage = new Image("./warehouse2.png");
             ImageView imageView2 = new ImageView();
             imageView2.setImage(warehouseImage);
             imageView2.setX(OFFSET_X+LENGTH_X*warehouse.getX()-WAREHOUSE_IMAGE_HEIGHT/2);

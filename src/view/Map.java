@@ -162,8 +162,9 @@ public class Map {
         long time = date.getTime();
 
 
+        String exportFolder = "./export/";
         // File input path
-        try (PrintWriter writer = new PrintWriter(new File("DATA_"+time+".csv"))) {
+        try (PrintWriter writer = new PrintWriter(new File(exportFolder+"DATA_"+time+".csv"))) {
 
             StringBuilder sb = new StringBuilder();
             sb.append("i");
@@ -198,8 +199,8 @@ public class Map {
             boolean isRecuit = true;
 
             //Le nombre de ligne de csv
-            int nRow = 10;
-            int sizeTabu = 25;
+            int nRow = 2;
+            int sizeTabu = 100;
             int maxIteration = 10000;
             double variation = 0.9;
 

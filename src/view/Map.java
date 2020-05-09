@@ -249,7 +249,7 @@ public class Map {
                     sb.append(';');
                     sb.append(graphInitialType);
                     sb.append(';');
-                    sb.append(deliveryPointController.getTotalLength());
+                    sb.append((int) deliveryPointController.getTotalLength());
                     sb.append(';');
                     sb.append(deliveryPointController.getDeliveryRoutes().size());
                     sb.append(';');
@@ -261,7 +261,7 @@ public class Map {
                         deliveryPointController.tabuSearch(sizeTabu,maxIteration);
                     }
 
-                    sb.append(deliveryPointController.getTotalLength());
+                    sb.append((int) deliveryPointController.getTotalLength());
                     sb.append(';');
                     sb.append(deliveryPointController.getDeliveryRoutes().size());
                     sb.append(';');

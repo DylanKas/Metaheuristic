@@ -1,0 +1,11 @@
+i;GraphName;Algorithm;N Colis;Graph Initial;x0 fitness;x0 Nb camions;xi fitness;xi Nb camions;Temps calcul (en ms);Max iteration;Variation ou Taille liste
+0;A3205.txt;tabou;32;filltruck;2080;5;854;5;760;500;10
+1;A3205.txt;tabou;32;filltruck;2080;5;854;5;810;500;20
+2;A3205.txt;tabou;32;filltruck;2080;5;854;5;526;500;30
+3;A3205.txt;tabou;32;filltruck;2080;5;861;5;315;500;40
+4;A3205.txt;tabou;32;filltruck;2080;5;941;5;1277;500;50
+5;A3205.txt;tabou;32;filltruck;2080;5;873;5;442;500;60
+6;A3205.txt;tabou;32;filltruck;2080;5;876;5;305;500;70
+7;A3205.txt;tabou;32;filltruck;2080;5;873;5;299;500;80
+8;A3205.txt;tabou;32;filltruck;2080;5;847;5;1770;500;90
+9;A3205.txt;tabou;32;filltruck;2080;5;847;5;1693;500;100

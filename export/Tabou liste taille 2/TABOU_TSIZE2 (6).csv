@@ -1,0 +1,26 @@
+i;GraphName;Algorithm;N Colis;Graph Initial;x0 fitness;x0 Nb camions;xi fitness;xi Nb camions;Temps calcul (en ms);Max iteration;Variation ou Taille liste
+0;A3205.txt;tabou;32;filltruck;2080;5;1236;5;0;10;100
+0;A3305.txt;tabou;33;filltruck;1886;5;1144;5;0;10;100
+0;A3306.txt;tabou;33;filltruck;1593;7;941;7;0;10;100
+0;A3405.txt;tabou;34;filltruck;2073;6;1214;6;0;10;100
+0;A3605.txt;tabou;36;filltruck;1991;5;1238;5;0;10;100
+0;A3705.txt;tabou;37;filltruck;1593;5;955;5;0;10;100
+0;A3706.txt;tabou;37;filltruck;2050;7;1268;7;0;10;100
+0;A3805.txt;tabou;38;filltruck;2251;6;1351;6;0;10;100
+0;A3905.txt;tabou;39;filltruck;2377;6;1352;6;0;10;100
+0;A3906.txt;tabou;39;filltruck;2385;6;1318;6;0;10;100
+0;A4406.txt;tabou;44;filltruck;2603;7;1599;6;0;10;100
+0;A4506.txt;tabou;45;filltruck;2815;7;1892;7;0;10;100
+0;A4507.txt;tabou;45;filltruck;2775;7;1881;7;0;10;100
+0;A4607.txt;tabou;46;filltruck;2693;7;1718;7;0;10;100
+0;A5307.txt;tabou;53;filltruck;3300;8;2206;8;0;10;100
+0;A5407.txt;tabou;54;filltruck;3491;8;2502;8;0;10;100
+0;A5509.txt;tabou;55;filltruck;2950;9;2103;9;0;10;100
+0;A6009.txt;tabou;60;filltruck;3770;10;2704;10;0;10;100
+0;A6109.txt;tabou;61;filltruck;3236;11;2293;11;0;10;100
+0;A6208.txt;tabou;62;filltruck;3474;8;2531;8;0;10;100
+0;A6310.txt;tabou;63;filltruck;3706;11;2646;11;0;10;100
+0;A6409.txt;tabou;64;filltruck;3734;10;2815;10;0;10;100
+0;A6509.txt;tabou;65;filltruck;3673;10;2660;10;0;10;100
+0;A6909.txt;tabou;69;filltruck;4196;10;3063;9;0;10;100
+0;A8010.txt;tabou;80;filltruck;5166;11;4039;10;0;10;100

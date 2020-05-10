@@ -1,0 +1,180 @@
+Recuit(Entier maxIter, Décimal variation) {
+	ListeRoutes solution;
+	Décimal longeurPrécédente = longueurActuelle;
+	Décimal température = températureInitiale;
+	
+	Pour i de 0 à maxIter:
+		solution = solutionActuelle;
+		
+		Aléatoirement:
+			OpérateurAléatoire1();
+			OpérateurAléatoire2();
+			
+		Décimal nouvelleLongueur = longueurActuelle;
+		
+		Si
+			nouvelleLongueur < longeurPrécédente
+			ou DécimalAléatoire < exp((longeurPrécédente - nouvelleLongueur) / température)
+		Alors
+			longeurPrécédente = nouvelleLongueur;
+		Sinon
+			solutionActuelle = solution;
+		Fin Si
+		
+		température = variation x température;
+	
+	Retourner solution;	
+}
+
+OpérateurAléatoire1() {
+	Route routeAléatoire = RouteAléatoire();
+	
+	Si
+		taille(routeAléatoire) > 1
+	Alors
+		Point pointDéplacé = RetirerPoint(routeAléatoire, indexAléatoire);
+		Entier indexInsertionAléatoire = index aléatoire de routeAléatoire != indexAléatoire;
+		InsérerPoint(routeAléatoire, pointDéplacé, indexInsertionAléatoire);
+	Fin Si
+	
+	retourner solutionActuelle
+}
+
+OpérateurAléatoire2() {
+	Route routeAléatoire = RouteAléatoire();
+	Point pointDéplacé = RetirerPoint(routeAléatoire, indexAléatoire);
+	
+	Si
+		routeAléatoire est vide
+	Alors
+		supprimerRoute(routeAléatoire);
+	Fin Si
+	
+	Parcourir aléatoirement les autres routes que routeAléatoire tant que quantité(nouvelleRoute) + quantité(pointDéplacé) < quantitéMax;
+	Si
+		on trouve nouvelleRoute
+	Alors
+		InsérerPoint(nouvelleRoute, pointDéplacé, indexInsertionAléatoire);
+	Sinon
+		Route routeCréée = CréerNouvelleRoute();
+		ajouterPoint(routeCréée, pointDéplacé);
+	Fin Si
+	
+	retourner solutionActuelle;
+}
+
+Tabou(Entier tailleTabou, Entier maxIter) {
+	ListeRoutes meilleureSolution = solutionActuelle;
+	Décimal meilleureLongueur = taille(meilleureSolution);
+	Décimal longueurPrécédente = longueurActuelle;
+	
+	File listeTabou = Ø;
+	ListeSolutions voisins;
+	
+	Pour i de 0 à maxIter:
+		voisins = GénérerVoisins();
+		ListeRoute min = chercherMinimum();
+		Décimal nouvelleLongueur = longueur(min);
+		
+		Si
+			nouvelleLongueur > longeurPrécédente
+		Alors
+			Si
+				taille(listeTabou) == tailleTabou
+			Alors
+				retirerPremierElement(listeTabou);
+			Fin Si
+			
+			ajouter(listeTabou, min);
+		Fin Si
+		
+		longueurPrécédente = nouvelleLongueur;
+		
+		Si
+			nouvelleLongueur < meilleureLongueur
+		Alors
+			meilleureLongueur = nouvelleLongueur;
+			meilleureSolution = min;
+		Fin Si
+		
+		solutionActuelle = min;
+	Fin Pour
+	
+	retourner meilleureSolution;
+}
+
+GénérerVoisins() {
+	ListeSolutions voisins = Ø;
+	
+	Pour chaque indexRoute dans solutionActuelle:
+		Pour chaque indexPoint dans route:
+			ajouter(voisins, GénérerVoisins(route, point));
+		Fin Pour
+	Fin Pour
+	
+	
+	retourner voisins;
+}
+
+GénérerVoisins(Entier indexRoute, Entier indexPoint) {
+	ListeSolutions voisins = Ø;
+	
+	ajouter(voisins, GénérerVoisinsOpérateur1(indexRoute, indexPoint));
+	ajouter(voisins, GénérerVoisinsOpérateur2(indexRoute, indexPoint));
+	
+	retourner voisins;
+}
+
+GénérerVoisinsOpérateur1(Entier indexRoute, Entier indexPoint) {
+	ListeSolutions voisins = Ø;
+	
+	Si
+		taille(solutionActuelle[indexRoute]) > 1
+	Alors
+		Point pointDéplacé = RetirerPoint(indexRoute, indexPoint);
+	
+		Pour chaque point avec un index != indexPoint
+			Ajouter(solutionActuelle[indexRoute], pointDéplacé, index);
+			ajouter(voisins, solutionActuelle);
+			RetirerPoint(indexRoute, index);
+		Fin Pour
+	Fin Si
+	
+	retourner voisins;
+}
+
+GénérerVoisinsOpérateur2(Entier indexRoute, Entier indexPoint) {
+	ListeSolutions voisins = Ø;
+	
+	Point pointDéplacé = RetirerPoint(indexRoute, indexPoint);
+	Bouléen routeVidée = taille(solutionActuelle[indexRoute]) == 0;
+	
+	Si
+		routeVidée vrai
+	Alors
+		RetirerRoute(solutionActuelle, indexRoute);
+	Fin Si
+	
+	ListeRoute solutionIntermédiaire = solutionActuelle;
+	
+	Pour chaque route de solutionIntermédiaire:
+		Si
+			routeVidée vrai ou route != solutionIntermédiaire[indexRoute]
+		Alors
+			Si
+				quantité(route) + quantité(pointDéplacé) < quantitéMax
+			Alors
+				Pour chaque index de route + 1
+					Ajouter(solutionActuelle[indexRoute], pointDéplacé, index);
+					ajouter(voisins, solutionActuelle);
+					RetirerPoint(indexRoute, index);
+				Fin Pour
+			Fin Si
+		Fin Si
+	Fin Pour
+	
+	Ajouter(solutionActuelle, NouvelleRoute());
+	Ajouter(NouvelleRoute, pointDéplacé);
+	
+	retourner voisins;	
+}

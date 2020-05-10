@@ -208,7 +208,7 @@ public class Map {
             //Le nombre de ligne de csv
             int nRow = 10;
             int sizeTabu = 100;
-            int maxIteration = 10000;
+            int maxIteration = 100;
             double variation = 0.9;
 
             long startTime, endTime, elapsedTime;
@@ -231,8 +231,6 @@ public class Map {
                         graphInitialType = "filltruck";
                         deliveryPointController.generateOrderedSolution();
                     }
-                    endTime = System.nanoTime();
-                    elapsedTime = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 
                     sb = new StringBuilder();
                     sb.append(i);
@@ -260,6 +258,8 @@ public class Map {
                     }else{
                         deliveryPointController.tabuSearch(sizeTabu,maxIteration);
                     }
+                    endTime = System.nanoTime();
+                    elapsedTime = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 
                     sb.append((int) deliveryPointController.getTotalLength());
                     sb.append(';');

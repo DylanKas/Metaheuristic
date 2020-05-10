@@ -165,8 +165,6 @@ public class DeliveryPointController {
         final long start = System.currentTimeMillis();
         List<List<DeliveryRoute>> neighbors;
         for(int i=0;i<maximumIteration;i++){
-            System.out.println(i + " " + ((System.currentTimeMillis() - start) / 1000));
-
             neighbors = generateNeighbors();
             List<DeliveryRoute> min = neighbors.stream()
                     .filter(neighbor -> !tabuList.contains(neighbor))
@@ -206,6 +204,8 @@ public class DeliveryPointController {
         }
 
         deliveryRoutes = storedRoutes;
+
+        Collections.shuffle(neighbors);
 
         return neighbors;
     }

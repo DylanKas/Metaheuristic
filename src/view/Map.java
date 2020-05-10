@@ -153,7 +153,7 @@ public class Map {
         drawRoutes(deliveryPointController.generateOrderedSolution());
         drawHouses(deliveryPointController.getDeliveryPointList());
 
-        drawCsv();
+        //drawCsv();
     }
 
     public void drawCsv(){
@@ -201,12 +201,12 @@ public class Map {
             String graphInitialType;
 
             //Pour executer en greedy isGreedy = true, sinon Filltruck = false
-            boolean isGreedy = false;
+            boolean isGreedy = true;
             //Pour executer tabou isRecuit = false, sinon recuit = true
             boolean isRecuit = false;
 
             //Le nombre de ligne de csv
-            int nRow = 4;
+            int nRow = 1;
             int sizeTabu = 100;
             int maxIteration = 100;
             double variation = 0.9;
@@ -215,7 +215,8 @@ public class Map {
 
             for(int i=0;i<nRow;i++){
                 System.out.println("Row: "+i);
-                sizeTabu = 25+25*i;
+                sizeTabu = 20+20*i;
+                //sizeTabu = 50;
                 final File folder = new File("./resources/data");
                 ArrayList<String> choices = new ArrayList<>(listFilesForFolder(folder));
                 String graphName;

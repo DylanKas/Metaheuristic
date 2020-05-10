@@ -203,10 +203,10 @@ public class Map {
             //Pour executer en greedy isGreedy = true, sinon Filltruck = false
             boolean isGreedy = false;
             //Pour executer tabou isRecuit = false, sinon recuit = true
-            boolean isRecuit = true;
+            boolean isRecuit = false;
 
             //Le nombre de ligne de csv
-            int nRow = 10;
+            int nRow = 4;
             int sizeTabu = 100;
             int maxIteration = 100;
             double variation = 0.9;
@@ -214,10 +214,14 @@ public class Map {
             long startTime, endTime, elapsedTime;
 
             for(int i=0;i<nRow;i++){
+                System.out.println("Row: "+i);
+                sizeTabu = 25+25*i;
                 final File folder = new File("./resources/data");
                 ArrayList<String> choices = new ArrayList<>(listFilesForFolder(folder));
                 String graphName;
                 for(int j=0;j<choices.size();j++){
+                //for(int j=0;j<1;j++){
+                    System.out.println("  ---- Graph: "+choices.get(j));
                     graphName = choices.get(j);
                     startTime = System.nanoTime();
 

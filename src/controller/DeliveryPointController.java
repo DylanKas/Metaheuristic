@@ -9,8 +9,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -357,5 +360,28 @@ public class DeliveryPointController {
 
     private List<DeliveryRoute> cloneSolution(final List<DeliveryRoute> solution){
         return solution.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
+    }
+
+    private List<DeliveryRoute> selectRouletteSolution(final List<List<DeliveryRoute>> solutions) {
+        final Map<Double, List<DeliveryRoute>> solutionsMap = new HashMap<>();
+        double totalProbability = 0;
+        for(List<DeliveryRoute> solution : solutions) {
+            final double solutionProbability = 1 / getRoutesTotalLength(solution);
+            solutionsMap.put(solutionProbability, solution);
+            totalProbability += solutionProbability;
+        }
+
+        final double random = totalProbability * RANDOM.nextDouble();
+
+        double currentProbabilityCount = 0;
+
+        for (Map.Entry<Double, List<DeliveryRoute>> entry : solutionsMap.entrySet()) {
+            if(random < entry.getKey() + currentProbabilityCount ){
+                return entry.getValue();
+            }
+            else {
+                currentProbabilityCount += entry.getKey();
+            }
+        }
     }
 }

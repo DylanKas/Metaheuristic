@@ -194,6 +194,28 @@ public class DeliveryPointController {
         return bestSolution;
     }
 
+
+    public List<List<DeliveryRoute>> generateInitialPopulation(int sizePopulation, double mutationProbability){
+        //Probabilité de selectionné une solution générer après la mutation de la solution précèdente. Un nombre plus petit permet d'avoir une population plus varié.
+        //mutationProbability = 0.05;
+
+        final List<List<DeliveryRoute>> populations = new ArrayList<>();
+
+        while(populations.size() < sizePopulation){
+            if(RANDOM.nextFloat() < 0.5){
+                generateRandomNeighborSolution();
+            }else{
+                generateRandomNeighborSolution2();
+            }
+
+            if(RANDOM.nextFloat() < mutationProbability){
+                populations.add(cloneCurrentSolution());
+            }
+        }
+
+        return populations;
+    }
+
     public List<List<DeliveryRoute>> generateNeighbors(){
         final List<DeliveryRoute> storedRoutes = cloneCurrentSolution();
         final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
@@ -222,6 +244,7 @@ public class DeliveryPointController {
         return neighbors;
     }
 
+    /* Deplace un point aléatoirement dans sa route */
     public List<DeliveryRoute> generateRandomNeighborSolution() {
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
@@ -306,6 +329,7 @@ public class DeliveryPointController {
         return neighbors;
     }
 
+    /* Deplace un point aléatoirement d'une route à une autre' */
     public List<DeliveryRoute> generateRandomNeighborSolution2() {
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);

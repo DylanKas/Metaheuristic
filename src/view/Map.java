@@ -153,6 +153,7 @@ public class Map {
         drawRoutes(deliveryPointController.generateOrderedSolution());
         drawHouses(deliveryPointController.getDeliveryPointList());
 
+
         //drawCsv();
     }
 
@@ -455,8 +456,11 @@ public class Map {
 
     public void resetMap(){
         logAction("- Map has been reset");
+        deliveryPointController.generateInitialPopulation(20,1);
         resetLines();
         resetHouses();
+        drawRoutes(deliveryPointController.getDeliveryRoutes());
+        drawHouses(deliveryPointController.getDeliveryPointList());
     }
 
 

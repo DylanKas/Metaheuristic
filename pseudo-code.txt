@@ -50,7 +50,8 @@ OpérateurAléatoire2() {
 		supprimerRoute(routeAléatoire);
 	Fin Si
 	
-	Parcourir aléatoirement les autres routes que routeAléatoire tant que quantité(nouvelleRoute) + quantité(pointDéplacé) < quantitéMax;
+	Parcourir aléatoirement les autres routes que routeAléatoire	
+		tant que quantité(nouvelleRoute) + quantité(pointDéplacé) < quantitéMax;
 	Si
 		on trouve nouvelleRoute
 	Alors

@@ -407,5 +407,7 @@ public class DeliveryPointController {
                 currentProbabilityCount += entry.getKey();
             }
         }
+
+        return null;
     }
 }

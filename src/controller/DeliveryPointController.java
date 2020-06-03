@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -130,8 +131,8 @@ public class DeliveryPointController {
         return deliveryRoutes;
     }
 
-    public double getInitialTemperature(){
-        return -getTotalLength()/Math.log(0.8);
+    public double getInitialTemperature() {
+        return -getTotalLength() / Math.log(0.8);
     }
 
     public void simulatedAnnealing(final int maximumIteration, final double variation) {
@@ -141,7 +142,7 @@ public class DeliveryPointController {
         //double variation = 0.90;
 
 
-        for(int i = 0; i < maximumIteration; i++){
+        for (int i = 0; i < maximumIteration; i++) {
             currentSolution = cloneCurrentSolution();
             if (RANDOM.nextBoolean()) {
                 generateRandomNeighborSolution2();
@@ -149,10 +150,9 @@ public class DeliveryPointController {
                 generateRandomNeighborSolution();
             }
             final double currentTotalLength = getTotalLength();
-            if(currentTotalLength < latestTotalLength || (RANDOM.nextDouble() < Math.exp((latestTotalLength - currentTotalLength) / temperature))){
+            if (currentTotalLength < latestTotalLength || (RANDOM.nextDouble() < Math.exp((latestTotalLength - currentTotalLength) / temperature))) {
                 latestTotalLength = currentTotalLength;
-            }
-            else {
+            } else {
                 deliveryRoutes = currentSolution;
             }
             temperature = variation * temperature;
@@ -167,21 +167,21 @@ public class DeliveryPointController {
 
         final long start = System.currentTimeMillis();
         List<List<DeliveryRoute>> neighbors;
-        for(int i=0;i<maximumIteration;i++){
+        for (int i = 0; i < maximumIteration; i++) {
             neighbors = generateNeighbors();
             List<DeliveryRoute> min = neighbors.stream()
                     .filter(neighbor -> !tabuList.contains(neighbor))
-                    .min( (solution1, solution2) -> (int) (getRoutesTotalLength(solution1) - getRoutesTotalLength(solution2)))
+                    .min((solution1, solution2) -> (int) (getRoutesTotalLength(solution1) - getRoutesTotalLength(solution2)))
                     .get();
             double newRouteLength = getRoutesTotalLength(min);
-            if(newRouteLength > latestTotalLength){
-                if(tabuList.size() == tabuLength){
+            if (newRouteLength > latestTotalLength) {
+                if (tabuList.size() == tabuLength) {
                     tabuList.remove();
                 }
                 tabuList.add(cloneSolution(min));
             }
             latestTotalLength = newRouteLength;
-            if(newRouteLength < bestLength){
+            if (newRouteLength < bestLength) {
                 bestLength = newRouteLength;
                 bestSolution = cloneSolution(min);
             }
@@ -194,21 +194,52 @@ public class DeliveryPointController {
         return bestSolution;
     }
 
+    public List<DeliveryRoute> geneticAlgorithm(final int populationSize, final int generationNumber
+            , final double mutationProbability, final int selectedBestNumber) {
+        final List<List<DeliveryRoute>> population = generateInitialPopulation(populationSize, mutationProbability);
+        List<DeliveryRoute> bestSolution = findBest(population);
 
-    public List<List<DeliveryRoute>> generateInitialPopulation(int sizePopulation, double mutationProbability){
+        for (int i = 0; i < generationNumber; i++) {
+            final List<List<DeliveryRoute>> roulettePopulation;
+            population = bestSolutionReproduction(selectedBestNumber, population);
+            for(int j = selectedBestNumber + 1; j < populationSize) {
+                if(RANDOM.nextDouble() < mutationProbability) {
+
+                }
+                else {
+
+                }
+            }
+            bestSolution = findBest(population);
+        }
+
+        return bestSolution;
+
+    }
+
+    private List<DeliveryRoute> findBest(final List<List<DeliveryRoute>> solutions) {
+        return cloneSolution(solutions.stream().min(Comparator.comparingDouble(solution -> getRoutesTotalLength(solution))).get());
+    }
+
+    private List<DeliveryRoute> bestSolutionReproduction(final int selectedBestNumber, final List<List<DeliveryRoute>> previousPopulation) {
+        //TODO
+    }
+
+
+    public List<List<DeliveryRoute>> generateInitialPopulation(int sizePopulation, double mutationProbability) {
         //Probabilité de selectionné une solution générer après la mutation de la solution précèdente. Un nombre plus petit permet d'avoir une population plus varié.
         //mutationProbability = 0.05;
 
         final List<List<DeliveryRoute>> populations = new ArrayList<>();
 
-        while(populations.size() < sizePopulation){
-            if(RANDOM.nextFloat() < 0.5){
+        while (populations.size() < sizePopulation) {
+            if (RANDOM.nextFloat() < 0.5) {
                 generateRandomNeighborSolution();
-            }else{
+            } else {
                 generateRandomNeighborSolution2();
             }
 
-            if(RANDOM.nextFloat() < mutationProbability){
+            if (RANDOM.nextFloat() < mutationProbability) {
                 populations.add(cloneCurrentSolution());
             }
         }
@@ -216,12 +247,12 @@ public class DeliveryPointController {
         return populations;
     }
 
-    public List<List<DeliveryRoute>> generateNeighbors(){
+    public List<List<DeliveryRoute>> generateNeighbors() {
         final List<DeliveryRoute> storedRoutes = cloneCurrentSolution();
         final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
 
-        for(int routeIndex = 0; routeIndex < storedRoutes.size(); routeIndex++) {
-            for(int pointIndex = 0; pointIndex < storedRoutes.get(routeIndex).getDeliveryPointList().size(); pointIndex++) {
+        for (int routeIndex = 0; routeIndex < storedRoutes.size(); routeIndex++) {
+            for (int pointIndex = 0; pointIndex < storedRoutes.get(routeIndex).getDeliveryPointList().size(); pointIndex++) {
 
                 neighbors.addAll(generateAllNeighbors(routeIndex, pointIndex));
                 deliveryRoutes = cloneCurrentSolution();
@@ -235,11 +266,11 @@ public class DeliveryPointController {
         return neighbors;
     }
 
-    public List<List<DeliveryRoute>> generateAllNeighbors(int routeIndex,int pointIndex) {
+    public List<List<DeliveryRoute>> generateAllNeighbors(int routeIndex, int pointIndex) {
         final List<List<DeliveryRoute>> neighbors = new ArrayList<>();
 
         neighbors.addAll(generateAllNeighborSolutions(routeIndex, pointIndex));
-        neighbors.addAll(generateAllNeighborSolutions2(routeIndex,pointIndex));
+        neighbors.addAll(generateAllNeighborSolutions2(routeIndex, pointIndex));
 
         return neighbors;
     }
@@ -254,7 +285,7 @@ public class DeliveryPointController {
             final int deliveryPointToMoveIndex = RANDOM.nextInt(deliveryPointListToModify.size());
             final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(deliveryPointToMoveIndex);
             int insertIndex;
-            while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size() + 1)) == deliveryPointToMoveIndex);
+            while ((insertIndex = RANDOM.nextInt(deliveryPointListToModify.size() + 1)) == deliveryPointToMoveIndex) ;
             deliveryRouteToModify.add(insertIndex, deliveryPointToMove);
         }
 
@@ -271,8 +302,8 @@ public class DeliveryPointController {
         if (size > 1) {
             final DeliveryPoint deliveryPointToMove = deliveryRouteToModify.remove(pointIndex);
 
-            for(int i = 0; i < size; i++) {
-                if(i != pointIndex) {
+            for (int i = 0; i < size; i++) {
+                if (i != pointIndex) {
                     deliveryRouteToModify.add(i, deliveryPointToMove);
                     neighbors.add(cloneCurrentSolution());
                     deliveryRouteToModify.remove(i);
@@ -299,9 +330,9 @@ public class DeliveryPointController {
 
         final List<DeliveryRoute> intermediateSolution = cloneCurrentSolution();
 
-        for(int routeInsertIndex = 0; routeInsertIndex < intermediateSolution.size(); routeInsertIndex++) {
+        for (int routeInsertIndex = 0; routeInsertIndex < intermediateSolution.size(); routeInsertIndex++) {
 
-            if(removedEmptyList || routeInsertIndex != routeIndex) {
+            if (removedEmptyList || routeInsertIndex != routeIndex) {
 
                 final DeliveryRoute deliveryRouteToInsert = deliveryRoutes.get(routeInsertIndex);
 
@@ -317,7 +348,6 @@ public class DeliveryPointController {
 
             }
         }
-
 
 
         final DeliveryRoute newDeliveryRoute = new DeliveryRoute(getWarehouse());
@@ -378,18 +408,18 @@ public class DeliveryPointController {
         return solution.stream().mapToDouble(DeliveryRoute::getLength).sum();
     }
 
-    private List<DeliveryRoute> cloneCurrentSolution(){
+    private List<DeliveryRoute> cloneCurrentSolution() {
         return deliveryRoutes.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
     }
 
-    private List<DeliveryRoute> cloneSolution(final List<DeliveryRoute> solution){
+    private List<DeliveryRoute> cloneSolution(final List<DeliveryRoute> solution) {
         return solution.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
     }
 
-    private List<DeliveryRoute> selectRouletteSolution(final List<List<DeliveryRoute>> solutions) {
+    public List<DeliveryRoute> selectRouletteSolution(final List<List<DeliveryRoute>> solutions) {
         final Map<Double, List<DeliveryRoute>> solutionsMap = new HashMap<>();
         double totalProbability = 0;
-        for(List<DeliveryRoute> solution : solutions) {
+        for (List<DeliveryRoute> solution : solutions) {
             final double solutionProbability = 1 / getRoutesTotalLength(solution);
             solutionsMap.put(solutionProbability, solution);
             totalProbability += solutionProbability;
@@ -400,10 +430,9 @@ public class DeliveryPointController {
         double currentProbabilityCount = 0;
 
         for (Map.Entry<Double, List<DeliveryRoute>> entry : solutionsMap.entrySet()) {
-            if(random < entry.getKey() + currentProbabilityCount ){
+            if (random < entry.getKey() + currentProbabilityCount) {
                 return entry.getValue();
-            }
-            else {
+            } else {
                 currentProbabilityCount += entry.getKey();
             }
         }

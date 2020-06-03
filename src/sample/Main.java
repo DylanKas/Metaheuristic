@@ -15,11 +15,8 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Metaheuristic - Mehdi Labourdette - Dylan Kong A Siou");
         primaryStage.setScene(new Scene(root, 1200, 800));
-        //primaryStage.show();
-        Map map = new Map(primaryStage);
+        new Map(primaryStage);
         primaryStage.show();
-
-        final DeliveryPointController controller = DeliveryPointController.initializeFromFile("./resources/data/A3205.txt");
     }
 
 

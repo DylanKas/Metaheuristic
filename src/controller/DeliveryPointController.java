@@ -200,14 +200,15 @@ public class DeliveryPointController {
         List<DeliveryRoute> bestSolution = findBest(population);
 
         for (int i = 0; i < generationNumber; i++) {
-            final List<List<DeliveryRoute>> roulettePopulation;
+            final List<DeliveryRoute> rouletteSolution = selectRouletteSolution(population);
             population = bestSolutionReproduction(selectedBestNumber, population);
             for(int j = selectedBestNumber + 1; j < populationSize) {
                 if(RANDOM.nextDouble() < mutationProbability) {
-
+                    mutate(rouletteSolution);
                 }
                 else {
-
+                    //TODO crossover
+                    mutate(rouletteSolution);
                 }
             }
             bestSolution = findBest(population);
@@ -221,8 +222,9 @@ public class DeliveryPointController {
         return cloneSolution(solutions.stream().min(Comparator.comparingDouble(solution -> getRoutesTotalLength(solution))).get());
     }
 
-    private List<DeliveryRoute> bestSolutionReproduction(final int selectedBestNumber, final List<List<DeliveryRoute>> previousPopulation) {
+    private List<List<DeliveryRoute>> bestSolutionReproduction(final int selectedBestNumber, final List<List<DeliveryRoute>> previousPopulation) {
         //TODO
+        return previousPopulation;
     }
 
 

@@ -115,6 +115,20 @@ public class Map {
         Button buttonNeighbor2 = (Button) stage.getScene().lookup("#buttonNeighbor2");
         buttonNeighbor2.setOnAction(buttonNeighbor2Handler);
 
+        //Set reset button behavior
+        EventHandler<ActionEvent> buttonNeighbor3Handler = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    runAndWait(Map.this::resetLines);
+                } finally {
+                    drawRoutes(deliveryPointController.geneticAlgorithm(20,1000,0.5,5));
+                }
+            }
+        };
+        Button buttonNeighbor3 = (Button) stage.getScene().lookup("#buttonNeighbor3");
+        buttonNeighbor3.setOnAction(buttonNeighbor3Handler);
+
         //Set choice box with data files
         final File folder = new File("./resources/data");
         ArrayList<String> choices = new ArrayList<>(listFilesForFolder(folder));

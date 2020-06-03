@@ -196,14 +196,16 @@ public class DeliveryPointController {
 
     public List<DeliveryRoute> geneticAlgorithm(final int populationSize, final int generationNumber
             , final double mutationProbability, final int selectedBestNumber) {
-        final List<List<DeliveryRoute>> population = generateInitialPopulation(populationSize, mutationProbability);
+        List<List<DeliveryRoute>> population = generateInitialPopulation(populationSize, mutationProbability);
         List<DeliveryRoute> bestSolution = findBest(population);
 
         for (int i = 0; i < generationNumber; i++) {
             final List<DeliveryRoute> rouletteSolution = selectRouletteSolution(population);
             population = bestSolutionReproduction(selectedBestNumber, population);
-            for(int j = selectedBestNumber + 1; j < populationSize) {
+            for(int j = selectedBestNumber + 1; j < populationSize;j++) {
                 if(RANDOM.nextDouble() < mutationProbability) {
+                    System.out.println("___________________________________________________");
+                    System.out.println(rouletteSolution);
                     mutate(rouletteSolution);
                 }
                 else {
@@ -363,6 +365,7 @@ public class DeliveryPointController {
 
     /* Deplace un point aléatoirement d'une route à une autre' */
     public List<DeliveryRoute> generateRandomNeighborSolution2() {
+        System.out.println("Size: "+deliveryRoutes.size());
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
@@ -420,11 +423,12 @@ public class DeliveryPointController {
 
     private List<DeliveryRoute> mutate(List<DeliveryRoute> routes){
         List<DeliveryRoute> currentSolution = cloneCurrentSolution();
+        System.out.println("Current solution: "+currentSolution);
         List<DeliveryRoute> mutatedSolution;
 
         deliveryRoutes = routes;
         for(int i=0;i<RANDOM.nextInt(10) ;i++){
-            if(RANDOM.nextFloat() < 0.5){
+            if(RANDOM.nextFloat() < 0.2){
                 generateRandomNeighborSolution();
             }else{
                 generateRandomNeighborSolution2();
@@ -442,6 +446,10 @@ public class DeliveryPointController {
         double totalProbability = 0;
         for (List<DeliveryRoute> solution : solutions) {
             final double solutionProbability = 1 / getRoutesTotalLength(solution);
+            if(solutionsMap.get(solutionProbability)!=null){
+                System.out.println("--------- WTF -----------");
+                System.out.println(solutionsMap);
+            }
             solutionsMap.put(solutionProbability, solution);
             totalProbability += solutionProbability;
         }
@@ -450,14 +458,19 @@ public class DeliveryPointController {
 
         double currentProbabilityCount = 0;
 
+        System.out.println("Total: "+totalProbability);
         for (Map.Entry<Double, List<DeliveryRoute>> entry : solutionsMap.entrySet()) {
-            if (random < entry.getKey() + currentProbabilityCount) {
+            System.out.println("RANDOM: "+random);
+            System.out.println("KEY: "+(entry.getKey()+currentProbabilityCount));
+            System.out.println("Current: "+currentProbabilityCount);
+            if (random <= entry.getKey() + currentProbabilityCount) {
                 return entry.getValue();
             } else {
                 currentProbabilityCount += entry.getKey();
             }
         }
 
+        System.out.println(solutions);
         return null;
     }
 }

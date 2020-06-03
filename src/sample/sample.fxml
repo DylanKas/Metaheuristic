@@ -74,6 +74,21 @@
                   </AnchorPane>
             </content>
           </Tab>
+          <Tab text="Genetic">
+              <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                          <Button fx:id="buttonNeighbor3" layoutY="201.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Start" />
+                          <Slider id="speed_genetic" layoutX="9.0" layoutY="23.0" majorTickUnit="1000.0" max="1000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="1000.0" />
+                          <Label layoutX="14.0" layoutY="6.0" prefHeight="13.0" prefWidth="151.0" text="NbGeneration" />
+                          <Label layoutX="14.0" layoutY="57.0" prefHeight="13.0" prefWidth="151.0" text="Population size" />
+                          <Slider id="size_genetic" layoutX="9.0" layoutY="77.0" majorTickUnit="1000.0" max="1000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="100.0" />
+                          <Label layoutX="14.0" layoutY="111.0" prefHeight="13.0" prefWidth="151.0" text="Mutation" />
+                          <Slider id="mutation_genetic" layoutX="9.0" layoutY="128.0" majorTickUnit="100000.0" max="100000.0" min="1.0" minorTickCount="10" prefHeight="16.0" prefWidth="175.0" showTickLabels="true" showTickMarks="true" value="10000.0" />
+                      </children>
+                  </AnchorPane>
+              </content>
+          </Tab>
             <Tab text="Itinerary">
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">

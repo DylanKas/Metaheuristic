@@ -442,35 +442,19 @@ public class DeliveryPointController {
 
 
     private List<DeliveryRoute> selectRouletteSolution(final List<List<DeliveryRoute>> solutions) {
-        final Map<Double, List<DeliveryRoute>> solutionsMap = new HashMap<>();
-        double totalProbability = 0;
-        for (List<DeliveryRoute> solution : solutions) {
-            final double solutionProbability = 1 / getRoutesTotalLength(solution);
-            if(solutionsMap.get(solutionProbability)!=null){
-                System.out.println("--------- WTF -----------");
-                System.out.println(solutionsMap);
-            }
-            solutionsMap.put(solutionProbability, solution);
-            totalProbability += solutionProbability;
-        }
-
+        final double totalProbability = solutions.stream().mapToDouble(solution -> 1 / getRoutesTotalLength(solution)).sum();
         final double random = totalProbability * RANDOM.nextDouble();
-
         double currentProbabilityCount = 0;
 
-        System.out.println("Total: "+totalProbability);
-        for (Map.Entry<Double, List<DeliveryRoute>> entry : solutionsMap.entrySet()) {
-            System.out.println("RANDOM: "+random);
-            System.out.println("KEY: "+(entry.getKey()+currentProbabilityCount));
-            System.out.println("Current: "+currentProbabilityCount);
-            if (random <= entry.getKey() + currentProbabilityCount) {
-                return entry.getValue();
+        for (List<DeliveryRoute> solution : solutions) {
+            final double solutionProbability = 1 / getRoutesTotalLength(solution);
+            if (random <= solutionProbability + currentProbabilityCount) {
+                return solution;
             } else {
-                currentProbabilityCount += entry.getKey();
+                currentProbabilityCount += solutionProbability;
             }
         }
 
-        System.out.println(solutions);
         return null;
     }
 }

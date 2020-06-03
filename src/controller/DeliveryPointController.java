@@ -386,6 +386,25 @@ public class DeliveryPointController {
         return solution.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
     }
 
+    private List<DeliveryRoute> mutate(List<DeliveryRoute> routes){
+        List<DeliveryRoute> currentSolution = cloneCurrentSolution();
+        List<DeliveryRoute> mutatedSolution;
+
+        deliveryRoutes = routes;
+        for(int i=0;i<RANDOM.nextInt(10) ;i++){
+            if(RANDOM.nextFloat() < 0.5){
+                generateRandomNeighborSolution();
+            }else{
+                generateRandomNeighborSolution2();
+            }
+        }
+        mutatedSolution = deliveryRoutes;
+        deliveryRoutes = currentSolution;
+
+       return mutatedSolution;
+    }
+
+
     private List<DeliveryRoute> selectRouletteSolution(final List<List<DeliveryRoute>> solutions) {
         final Map<Double, List<DeliveryRoute>> solutionsMap = new HashMap<>();
         double totalProbability = 0;

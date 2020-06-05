@@ -196,25 +196,31 @@ public class DeliveryPointController {
 
     public List<DeliveryRoute> geneticAlgorithm(final int populationSize, final int generationNumber
             , final double mutationProbability, final int selectedBestNumber) {
+        List<DeliveryRoute> bestSolution = cloneCurrentSolution();
         List<List<DeliveryRoute>> population = generateInitialPopulation(populationSize, mutationProbability);
-        List<DeliveryRoute> bestSolution = findBest(population);
+        List<DeliveryRoute> localBestSolution = findBest(population);
+        if (getRoutesTotalLength(localBestSolution) < getRoutesTotalLength(bestSolution)) {
+            bestSolution = localBestSolution;
+        }
 
         for (int i = 0; i < generationNumber; i++) {
             final List<DeliveryRoute> rouletteSolution = selectRouletteSolution(population);
             population = bestSolutionReproduction(selectedBestNumber, population);
-            for(int j = selectedBestNumber + 1; j < populationSize;j++) {
-                if(RANDOM.nextDouble() < mutationProbability) {
-                    System.out.println("___________________________________________________");
-                    System.out.println(rouletteSolution);
-                    mutate(rouletteSolution);
-                }
-                else {
+            for (int j = selectedBestNumber + 1; j < populationSize; j++) {
+                if (RANDOM.nextDouble() < mutationProbability) {
+                    population.add(mutate(rouletteSolution));
+                } else {
                     //TODO crossover
-                    mutate(rouletteSolution);
+                    population.add(mutate(rouletteSolution));
                 }
             }
-            bestSolution = findBest(population);
+            localBestSolution = findBest(population);
+            if (getRoutesTotalLength(localBestSolution) < getRoutesTotalLength(bestSolution)) {
+                bestSolution = localBestSolution;
+            }
         }
+
+        deliveryRoutes = bestSolution;
 
         return bestSolution;
 
@@ -225,8 +231,10 @@ public class DeliveryPointController {
     }
 
     private List<List<DeliveryRoute>> bestSolutionReproduction(final int selectedBestNumber, final List<List<DeliveryRoute>> previousPopulation) {
-        //TODO
-        return previousPopulation;
+        return previousPopulation.stream()
+                .sorted(Comparator.comparingDouble(solution -> getRoutesTotalLength(solution)))
+                .limit(selectedBestNumber)
+                .collect(Collectors.toList());
     }
 
 
@@ -365,7 +373,7 @@ public class DeliveryPointController {
 
     /* Deplace un point aléatoirement d'une route à une autre' */
     public List<DeliveryRoute> generateRandomNeighborSolution2() {
-        System.out.println("Size: "+deliveryRoutes.size());
+        System.out.println("Size: " + deliveryRoutes.size());
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
@@ -421,23 +429,23 @@ public class DeliveryPointController {
         return solution.stream().map(DeliveryRoute::clone).collect(Collectors.toList());
     }
 
-    private List<DeliveryRoute> mutate(List<DeliveryRoute> routes){
+    private List<DeliveryRoute> mutate(final List<DeliveryRoute> routes) {
         List<DeliveryRoute> currentSolution = cloneCurrentSolution();
-        System.out.println("Current solution: "+currentSolution);
+        System.out.println("Current solution: " + currentSolution);
         List<DeliveryRoute> mutatedSolution;
 
-        deliveryRoutes = routes;
-        for(int i=0;i<RANDOM.nextInt(10) ;i++){
-            if(RANDOM.nextFloat() < 0.2){
+        deliveryRoutes = cloneSolution(routes);
+        for (int i = 0; i < RANDOM.nextInt(10); i++) {
+            if (RANDOM.nextFloat() < 0.2) {
                 generateRandomNeighborSolution();
-            }else{
+            } else {
                 generateRandomNeighborSolution2();
             }
         }
         mutatedSolution = deliveryRoutes;
         deliveryRoutes = currentSolution;
 
-       return mutatedSolution;
+        return mutatedSolution;
     }
 
 

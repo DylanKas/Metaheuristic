@@ -222,7 +222,7 @@ public class DeliveryPointController {
     }
 
     public List<DeliveryRoute> geneticAlgorithm(final int populationSize, final int generationNumber
-            , final double mutationProbability, final int selectedBestNumber) {
+            , final double mutationProbability, final int selectedBestNumber, final int crossoverSize) {
         List<DeliveryRoute> bestSolution = cloneCurrentSolution();
         List<List<DeliveryRoute>> population = generateInitialPopulation(populationSize, mutationProbability);
         List<DeliveryRoute> localBestSolution = findBest(population);
@@ -237,7 +237,7 @@ public class DeliveryPointController {
                 if (RANDOM.nextDouble() < mutationProbability) {
                     population.add(mutate(rouletteSolution.get(RANDOM.nextInt(2))));
                 } else {
-                    crossover(rouletteSolution.get(0), rouletteSolution.get(1), 5);
+                    crossover(rouletteSolution.get(0), rouletteSolution.get(1), crossoverSize);
                 }
             }
             localBestSolution = findBest(population);

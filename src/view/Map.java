@@ -122,7 +122,7 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    drawRoutes(deliveryPointController.geneticAlgorithm(100,10000,0.5,50));
+                    drawRoutes(deliveryPointController.geneticAlgorithm(100,10000,0.5,50, 5));
                 }
             }
         };
@@ -179,10 +179,11 @@ public class Map {
         int nbPopulation = 100;
         double tauxMutation = 0.5;
         int selectedBestNumber = 50;
+        int crossoverSize = 5;
 
         String exportFolder = "./export/genetic/";
         // File input path
-        try (PrintWriter writer = new PrintWriter(new File(exportFolder+"GENETIC_"+time+"_NP"+nbPopulation+"_NG"+maxIteration+"_TM"+tauxMutation+"_BN"+selectedBestNumber+".csv"))) {
+        try (PrintWriter writer = new PrintWriter(new File(exportFolder+"GENETIC_"+time+"_NP"+nbPopulation+"_NG"+maxIteration+"_TM"+tauxMutation+"_BN"+selectedBestNumber+"_CS"+crossoverSize+".csv"))) {
 
             StringBuilder sb = new StringBuilder();
             sb.append("i");
@@ -265,7 +266,7 @@ public class Map {
                     sb.append(';');
 
 
-                    deliveryPointController.geneticAlgorithm(nbPopulation,maxIteration,tauxMutation,selectedBestNumber);
+                    deliveryPointController.geneticAlgorithm(nbPopulation,maxIteration,tauxMutation,selectedBestNumber, crossoverSize);
                     endTime = System.nanoTime();
                     elapsedTime = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 

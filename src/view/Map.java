@@ -162,7 +162,7 @@ public class Map {
         drawRoutes(deliveryPointController.generateOrderedSolution());
         drawHouses(deliveryPointController.getDeliveryPointList());
 
-        //drawCsv();
+        drawCsv();
     }
 
     public void drawCsv(){
@@ -171,10 +171,18 @@ public class Map {
         //getTime() returns current time in milliseconds
         long time = date.getTime();
 
+        //Pour executer en greedy isGreedy = true, sinon Filltruck = false
+        boolean isGreedy = false;
+        //Le nombre de ligne de csv
+        int nRow = 1;
+        int maxIteration = 1000;
+        int nbPopulation = 100;
+        double tauxMutation = 0.5;
+        int selectedBestNumber = 50;
 
-        String exportFolder = "./export/";
+        String exportFolder = "./export/genetic/";
         // File input path
-        try (PrintWriter writer = new PrintWriter(new File(exportFolder+"DATA_"+time+".csv"))) {
+        try (PrintWriter writer = new PrintWriter(new File(exportFolder+"GENETIC_"+time+"_NP"+nbPopulation+"_NG"+maxIteration+"_TM"+tauxMutation+"_BN"+selectedBestNumber+".csv"))) {
 
             StringBuilder sb = new StringBuilder();
             sb.append("i");
@@ -197,9 +205,13 @@ public class Map {
             sb.append(';');
             sb.append("Temps calcul (en ms)");
             sb.append(';');
-            sb.append("Max iteration");
+            sb.append("Max iteration (generation)");
             sb.append(';');
-            sb.append("Variation ou Taille liste");
+            sb.append("Nb population");
+            sb.append(';');
+            sb.append("Taux mutation");
+            sb.append(';');
+            sb.append("Nombre des meilleurs gardes");
             sb.append('\n');
             writer.write(sb.toString());
 
@@ -209,23 +221,13 @@ public class Map {
             /******************************************************************** */
             String graphInitialType;
 
-            //Pour executer en greedy isGreedy = true, sinon Filltruck = false
-            boolean isGreedy = true;
-            //Pour executer tabou isRecuit = false, sinon recuit = true
-            boolean isRecuit = false;
 
-            //Le nombre de ligne de csv
-            int nRow = 1;
-            int sizeTabu = 100;
-            int maxIteration = 100;
-            double variation = 0.9;
+
 
             long startTime, endTime, elapsedTime;
 
             for(int i=0;i<nRow;i++){
                 System.out.println("Row: "+i);
-                sizeTabu = 20+20*i;
-                //sizeTabu = 50;
                 final File folder = new File("./resources/data");
                 ArrayList<String> choices = new ArrayList<>(listFilesForFolder(folder));
                 String graphName;
@@ -251,11 +253,7 @@ public class Map {
                     sb.append(';');
                     sb.append(deliveryPointController.getGraphName());
                     sb.append(';');
-                    if(isRecuit){
-                        sb.append("recuit");
-                    }else{
-                        sb.append("tabou");
-                    }
+                    sb.append("genetic");
                     sb.append(';');
                     sb.append(deliveryPointController.getDeliveryPointList().size());
                     sb.append(';');
@@ -267,11 +265,7 @@ public class Map {
                     sb.append(';');
 
 
-                    if(isRecuit){
-                        deliveryPointController.simulatedAnnealing(maxIteration, variation);
-                    }else{
-                        deliveryPointController.tabuSearch(sizeTabu,maxIteration);
-                    }
+                    deliveryPointController.geneticAlgorithm(nbPopulation,maxIteration,tauxMutation,selectedBestNumber);
                     endTime = System.nanoTime();
                     elapsedTime = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 
@@ -282,18 +276,20 @@ public class Map {
                     sb.append(elapsedTime/1000000);
                     sb.append(';');
                     sb.append(maxIteration);
-                    if(isRecuit){
-                        sb.append(';');
-                        sb.append(variation);
-                    }else{
-                        sb.append(';');
-                        sb.append(sizeTabu);
-                    }
+
+                    sb.append(';');
+                    sb.append(nbPopulation);
+
+                    sb.append(';');
+                    sb.append(tauxMutation);
+
+                    sb.append(';');
+                    sb.append(selectedBestNumber);
                     sb.append('\n');
 
                     writer.write(sb.toString());
                 }
-                }
+            }
 
 
 

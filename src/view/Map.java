@@ -122,7 +122,7 @@ public class Map {
                 try {
                     runAndWait(Map.this::resetLines);
                 } finally {
-                    drawRoutes(deliveryPointController.geneticAlgorithm(100,1000,0.5,30));
+                    drawRoutes(deliveryPointController.geneticAlgorithm(100,10000,0.5,50));
                 }
             }
         };
@@ -161,7 +161,6 @@ public class Map {
         deliveryPointController.setGraphName(list.get(0));
         drawRoutes(deliveryPointController.generateOrderedSolution());
         drawHouses(deliveryPointController.getDeliveryPointList());
-
 
         //drawCsv();
     }

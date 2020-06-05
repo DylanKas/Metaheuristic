@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -99,6 +101,31 @@ public class DeliveryPointController {
         deliveryRoutes.add(new DeliveryRoute(warehouse));
 
         for (final DeliveryPoint deliveryPoint : deliveryPointList) {
+            if (deliveryPoint.getQuantity() != 0) {
+                final DeliveryRoute lastDeliveryRoute = deliveryRoutes.get(deliveryRoutes.size() - 1);
+
+                if (lastDeliveryRoute.getTotalQuantity() + deliveryPoint.getQuantity() < MAX_QUANTITY) {
+                    lastDeliveryRoute.add(deliveryPoint);
+                } else {
+                    final DeliveryRoute newDeliveryRoute = new DeliveryRoute(warehouse);
+
+                    newDeliveryRoute.add(deliveryPoint);
+
+                    deliveryRoutes.add(newDeliveryRoute);
+                }
+            }
+        }
+
+        return deliveryRoutes;
+    }
+
+    public List<DeliveryRoute> generateOrderedSolution(final List<DeliveryPoint> flatList) {
+        deliveryRoutes = new ArrayList<>();
+        final DeliveryPoint warehouse = deliveryPointList.get(0);
+
+        deliveryRoutes.add(new DeliveryRoute(warehouse));
+
+        for (final DeliveryPoint deliveryPoint : flatList) {
             if (deliveryPoint.getQuantity() != 0) {
                 final DeliveryRoute lastDeliveryRoute = deliveryRoutes.get(deliveryRoutes.size() - 1);
 
@@ -204,14 +231,13 @@ public class DeliveryPointController {
         }
 
         for (int i = 0; i < generationNumber; i++) {
-            final List<DeliveryRoute> rouletteSolution = selectRouletteSolution(population);
+            final List<List<DeliveryRoute>> rouletteSolution = selectRouletteSolution(population, 2);
             population = bestSolutionReproduction(selectedBestNumber, population);
             for (int j = selectedBestNumber + 1; j < populationSize; j++) {
                 if (RANDOM.nextDouble() < mutationProbability) {
-                    population.add(mutate(rouletteSolution));
+                    population.add(mutate(rouletteSolution.get(RANDOM.nextInt(2))));
                 } else {
-                    //TODO crossover
-                    population.add(mutate(rouletteSolution));
+                    crossover(rouletteSolution.get(0), rouletteSolution.get(1), 5);
                 }
             }
             localBestSolution = findBest(population);
@@ -373,7 +399,6 @@ public class DeliveryPointController {
 
     /* Deplace un point aléatoirement d'une route à une autre' */
     public List<DeliveryRoute> generateRandomNeighborSolution2() {
-        System.out.println("Size: " + deliveryRoutes.size());
         final int deliveryRouteToModifyIndex = RANDOM.nextInt(deliveryRoutes.size());
         final DeliveryRoute deliveryRouteToModify = deliveryRoutes.get(deliveryRouteToModifyIndex);
         final List<DeliveryPoint> deliveryPointListToModify = deliveryRouteToModify.getDeliveryPointList();
@@ -431,7 +456,6 @@ public class DeliveryPointController {
 
     private List<DeliveryRoute> mutate(final List<DeliveryRoute> routes) {
         List<DeliveryRoute> currentSolution = cloneCurrentSolution();
-        System.out.println("Current solution: " + currentSolution);
         List<DeliveryRoute> mutatedSolution;
 
         deliveryRoutes = cloneSolution(routes);
@@ -448,8 +472,57 @@ public class DeliveryPointController {
         return mutatedSolution;
     }
 
+    private List<List<DeliveryRoute>> crossover(final List<DeliveryRoute> routes1, final List<DeliveryRoute> routes2, final int crossoverSize) {
+        final List<List<DeliveryRoute>> children = new ArrayList<>();
 
-    private List<DeliveryRoute> selectRouletteSolution(final List<List<DeliveryRoute>> solutions) {
+        final List<DeliveryPoint> flatSolution1 = flattenSolution(routes1);
+        final List<DeliveryPoint> flatSolution2 = flattenSolution(routes2);
+
+        final int random = RANDOM.nextInt(flatSolution1.size() - crossoverSize);
+
+        for(int i = 0; i < crossoverSize; i++){
+            final DeliveryPoint point = flatSolution1.remove(random + i);
+            flatSolution1.add(flatSolution2.get(random + i));
+            flatSolution2.remove(random + i);
+            flatSolution2.add(point);
+        }
+
+        final Set<DeliveryPoint> solution1Points = new HashSet<>();
+        final List<DeliveryPoint> duplicates1 = new ArrayList<>();
+        final Set<DeliveryPoint> solution2Points = new HashSet<>(flatSolution2);
+        final List<DeliveryPoint> duplicates2 = new ArrayList<>();
+
+        for(DeliveryPoint point : flatSolution1) {
+            if(!solution1Points.add(point)) {
+                duplicates1.add(point);
+            }
+        }
+
+        for(DeliveryPoint point : flatSolution2) {
+            if(!solution2Points.add(point)) {
+                duplicates2.add(point);
+            }
+        }
+
+        for(int i = 0; i < duplicates1.size(); i++) {
+            final int index1 = duplicates1.indexOf(duplicates1.get(i));
+            final int index2 = duplicates2.indexOf(duplicates2.get(i));
+
+            flatSolution1.remove(index1);
+            flatSolution1.add(index1, duplicates2.get(i));
+
+            flatSolution2.remove(index2);
+            flatSolution1.add(index2, duplicates1.get(i));
+        }
+
+        children.add(generateOrderedSolution(flatSolution1));
+        children.add(generateOrderedSolution(flatSolution2));
+
+        return children;
+    }
+
+
+    private List<List<DeliveryRoute>> selectRouletteSolution(final List<List<DeliveryRoute>> solutions, final int numberOfResults) {
         final double totalProbability = solutions.stream().mapToDouble(solution -> 1 / getRoutesTotalLength(solution)).sum();
         final double random = totalProbability * RANDOM.nextDouble();
         double currentProbabilityCount = 0;
@@ -457,12 +530,26 @@ public class DeliveryPointController {
         for (List<DeliveryRoute> solution : solutions) {
             final double solutionProbability = 1 / getRoutesTotalLength(solution);
             if (random <= solutionProbability + currentProbabilityCount) {
-                return solution;
+                final List<List<DeliveryRoute>> rouletteSolutions = new ArrayList<>();
+                if(numberOfResults > 1) {
+                    final List<List<DeliveryRoute>> truncatedSolutions = new ArrayList<>(solutions);
+                    truncatedSolutions.remove(solution);
+                    rouletteSolutions.addAll(selectRouletteSolution(truncatedSolutions, numberOfResults - 1));
+                }
+                rouletteSolutions.add(solution);
+
+                return rouletteSolutions;
             } else {
                 currentProbabilityCount += solutionProbability;
             }
         }
 
         return null;
+    }
+
+    private List<DeliveryPoint> flattenSolution(final List<DeliveryRoute> solution) {
+        return solution.stream()
+                .flatMap(deliveryRoute -> deliveryRoute.getDeliveryPointList().stream())
+                .collect(Collectors.toList());
     }
 }

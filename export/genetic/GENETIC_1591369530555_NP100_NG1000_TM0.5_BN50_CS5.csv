@@ -1,0 +1,26 @@
+i;GraphName;Algorithm;N Colis;Graph Initial;x0 fitness;x0 Nb camions;xi fitness;xi Nb camions;Temps calcul (en ms);Max iteration (generation);Nb population;Taux mutation;Nombre des meilleurs gardes
+0;A3205.txt;genetic;32;filltruck;2080;5;979;5;641;1000;100;0.5;50
+0;A3305.txt;genetic;33;filltruck;1886;5;720;5;397;1000;100;0.5;50
+0;A3306.txt;genetic;33;filltruck;1593;7;848;6;394;1000;100;0.5;50
+0;A3405.txt;genetic;34;filltruck;2073;6;891;5;356;1000;100;0.5;50
+0;A3605.txt;genetic;36;filltruck;1991;5;1011;5;334;1000;100;0.5;50
+0;A3705.txt;genetic;37;filltruck;1593;5;742;5;347;1000;100;0.5;50
+0;A3706.txt;genetic;37;filltruck;2050;7;1132;7;370;1000;100;0.5;50
+0;A3805.txt;genetic;38;filltruck;2251;6;949;6;355;1000;100;0.5;50
+0;A3905.txt;genetic;39;filltruck;2377;6;1088;6;345;1000;100;0.5;50
+0;A3906.txt;genetic;39;filltruck;2385;6;1079;7;353;1000;100;0.5;50
+0;A4406.txt;genetic;44;filltruck;2603;7;1180;6;413;1000;100;0.5;50
+0;A4506.txt;genetic;45;filltruck;2815;7;1222;7;379;1000;100;0.5;50
+0;A4507.txt;genetic;45;filltruck;2775;7;1502;7;382;1000;100;0.5;50
+0;A4607.txt;genetic;46;filltruck;2693;7;1299;7;383;1000;100;0.5;50
+0;A5307.txt;genetic;53;filltruck;3300;8;1493;8;413;1000;100;0.5;50
+0;A5407.txt;genetic;54;filltruck;3491;8;1605;7;423;1000;100;0.5;50
+0;A5509.txt;genetic;55;filltruck;2950;9;1489;10;450;1000;100;0.5;50
+0;A6009.txt;genetic;60;filltruck;3770;10;1879;9;457;1000;100;0.5;50
+0;A6109.txt;genetic;61;filltruck;3236;11;1521;10;468;1000;100;0.5;50
+0;A6208.txt;genetic;62;filltruck;3474;8;1931;8;462;1000;100;0.5;50
+0;A6310.txt;genetic;63;filltruck;3706;11;1991;11;496;1000;100;0.5;50
+0;A6409.txt;genetic;64;filltruck;3734;10;2016;9;554;1000;100;0.5;50
+0;A6509.txt;genetic;65;filltruck;3673;10;1998;10;492;1000;100;0.5;50
+0;A6909.txt;genetic;69;filltruck;4196;10;1812;10;494;1000;100;0.5;50
+0;A8010.txt;genetic;80;filltruck;5166;11;2798;10;541;1000;100;0.5;50

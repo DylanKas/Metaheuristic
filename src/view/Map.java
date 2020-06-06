@@ -174,16 +174,16 @@ public class Map {
         //Pour executer en greedy isGreedy = true, sinon Filltruck = false
         boolean isGreedy = false;
         //Le nombre de ligne de csv
-        int nRow = 1;
-        int maxIteration = 1000;
+        int nRow = 10;
+        int maxIteration = 500;
         int nbPopulation = 100;
         double tauxMutation = 0.5;
-        int selectedBestNumber = 50;
-        int crossoverSize = 5;
+        int selectedBestNumber = 1;
+        int crossoverSize = 7;
 
         String exportFolder = "./export/genetic/";
         // File input path
-        try (PrintWriter writer = new PrintWriter(new File(exportFolder+"GENETIC_"+time+"_NP"+nbPopulation+"_NG"+maxIteration+"_TM"+tauxMutation+"_BN"+selectedBestNumber+"_CS"+crossoverSize+".csv"))) {
+        try (PrintWriter writer = new PrintWriter(new File(exportFolder+"GENETIC_"+time+(isGreedy ? "GREEDY_" : "FILLTRUCK_")+nbPopulation+"_NG"+maxIteration+"_TM"+tauxMutation+"_BN"+selectedBestNumber+"_CS"+crossoverSize+".csv"))) {
 
             StringBuilder sb = new StringBuilder();
             sb.append("i");

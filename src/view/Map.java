@@ -174,12 +174,12 @@ public class Map {
         //Pour executer en greedy isGreedy = true, sinon Filltruck = false
         boolean isGreedy = false;
         //Le nombre de ligne de csv
-        int nRow = 10;
-        int maxIteration = 500;
+        int nRow = 1;
+        int maxIteration = 10000000;
         int nbPopulation = 100;
-        double tauxMutation = 0.5;
-        int selectedBestNumber = 1;
-        int crossoverSize = 7;
+        double tauxMutation = 0.7;
+        int selectedBestNumber = 20;
+        int crossoverSize = 5;
 
         String exportFolder = "./export/genetic/";
         // File input path
@@ -232,7 +232,7 @@ public class Map {
                 final File folder = new File("./resources/data");
                 ArrayList<String> choices = new ArrayList<>(listFilesForFolder(folder));
                 String graphName;
-                for(int j=0;j<choices.size();j++){
+                for(int j=0;j<1/*choices.size()*/;j++){
                 //for(int j=0;j<1;j++){
                     System.out.println("  ---- Graph: "+choices.get(j));
                     graphName = choices.get(j);

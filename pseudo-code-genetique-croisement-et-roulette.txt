@@ -1,0 +1,53 @@
+SelectionRoulette(ListeSolutions population, Entier nombreSelection) {
+	Décimal probabilitéTotale = Somme des 1 / LongeurTotale(solution);
+	Décimal probabilitéAléatoire = Décimal aléatoire entre 0 et probabilitéTotale;
+	
+	Décimal probabilitéCumulée = 0;
+	
+	Pour chaque solution de population :
+		Décimal probabilitéSolution = 1 / LongeurTotale(solution);
+		
+		Si
+			probabilitéAléatoire <= probabilitéSolution  + probabilitéCumulée
+		Alors
+			ListeSolutions solutionsSelectionnées = Liste();
+			Si
+				nombreSelection > 1
+			Alors
+				ListeSolution populationRéduite = population - solution;
+				Ajouter(solutionsSelectionnées, SelectionRoulette(populationRéduite, nombreSelection - 1)
+			Fin Si
+			
+			Ajouter(solutionsSelectionnées, solution);
+			
+			retourner solutionsSelectionnées;
+		Sinon
+			probabilitéCumulée = probabilitéCumulée + probabilitéSolution;
+		Fin Si
+	Fin Pour
+	
+	retourner vide;
+}
+
+Croisement(Solution solution1, Solution solution2, Entier tailleCroisement) {
+	ListeSolution enfants = Liste();
+
+	ListeClients solutionPlane1 = aplatir(solution1);
+	ListeClients solutionPlane2 = aplatir(solution2);
+
+	Entier indexCoupure = Entier aléatoire entre 0 et taille d'une solution - tailleCroisement;
+	
+	Echanger les {tailleCroisement} clients dans chaque solution plane à partir d'indexCoupure;
+
+	ListeClients doublons1 = Liste();
+	ListeClients doublons2 = Liste();
+	
+	Récupérer dans doublons1 et doublons2 les doublons de chaque liste;
+	
+	Remplacer la première aparition de chaque doublon d'une liste par le doublon au même index de l'autre liste de doublon;
+
+	ajouter(enfants, genererSolution(solutionPlane1));
+	ajouter(enfants, genererSolution(solutionPlane2));
+
+	retourner enfants;
+}

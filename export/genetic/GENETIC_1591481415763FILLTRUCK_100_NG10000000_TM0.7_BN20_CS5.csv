@@ -1,0 +1,2 @@
+i;GraphName;Algorithm;N Colis;Graph Initial;x0 fitness;x0 Nb camions;xi fitness;xi Nb camions;Temps calcul (en ms);Max iteration (generation);Nb population;Taux mutation;Nombre des meilleurs gardes
+0;A3205.txt;genetic;32;filltruck;2080;5;830;5;3802083;10000000;100;0.7;20

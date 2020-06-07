@@ -51,3 +51,29 @@ Croisement(Solution solution1, Solution solution2, Entier tailleCroisement) {
 
 	retourner enfants;
 }
+
+GénérerPopulationInitial(Entier taillePopulation, Réelle tauxMutation){
+	ListeSolutions population = Ø;
+	
+	Solution populationCourante = générerPopulation(Greedy ou Filltruck)
+	Tant que taille(population) < taillePopulation :
+		Si RANDOM(1) < tauxMutation
+			mutation1(populationCourante) //par l'opérateur 1, interne à une route
+		Sinon
+			mutation2(populationCourante) //par l'opérateur 2, externe à une route
+		
+		population += populationCourante;
+			
+	retourner population;
+} 
+
+
+Mutation(Solution routes){
+	Pour n mutation (nombre aléatoire de 1 à 10) :
+		Si RANDOM(1) < 0.2
+			mutation1(routes) //par l'opérateur 1, interne à une route
+		Sinon
+			mutation2(routes) //par l'opérateur 2, externe à une route
+			
+	retourner routes;
+}

@@ -162,7 +162,7 @@ public class Map {
         drawRoutes(deliveryPointController.generateOrderedSolution());
         drawHouses(deliveryPointController.getDeliveryPointList());
 
-        drawCsv();
+        //drawCsv();
     }
 
     public void drawCsv(){
